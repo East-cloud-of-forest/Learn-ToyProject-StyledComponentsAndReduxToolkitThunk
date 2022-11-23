@@ -1,11 +1,14 @@
+import { useState } from "react";
 import styled from "styled-components";
 import Button from "./Button";
 import SideBar from "./SideBar";
 
 const Header = ({ SetDarkTheme, darkTheme }) => {
+  const [openSide, setOpenSide] = useState(null)
+
   return (
     <StHeader>
-      <Button size="1.5rem">📁</Button>
+      <Button size="1.5rem" onClick={()=>{setOpenSide(!openSide)}}>📁</Button>
       <Button size="1.5rem">로고</Button>
       <Button
         size="1.5rem"
@@ -15,7 +18,7 @@ const Header = ({ SetDarkTheme, darkTheme }) => {
       >
         {darkTheme ? "🌝" : "🌚"}
       </Button>
-      <SideBar />
+      <SideBar openSide={openSide} setOpenSide={setOpenSide} />
     </StHeader>
   );
 };

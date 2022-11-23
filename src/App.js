@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { ThemeProvider } from 'styled-components';
-import GlobalStyle from './style/GlobalStyle';
-import Header from './components/Header';
-import Router from './components/Router';
-import Darktheme from './style/Darktheme';
-import Lighttheme from './style/Lighttheme';
+import React from "react";
+import { ThemeProvider } from "styled-components";
+import GlobalStyle from "./style/GlobalStyle";
+import Router from "./components/Router";
+import Darktheme from "./style/Darktheme";
+import Lighttheme from "./style/Lighttheme";
+import { useSelector } from "react-redux";
 
 function App() {
-  const [darkTheme, SetDarkTheme] = useState(true)
+  const darkTheme = useSelector((state) => state.themeChange.darkTheme);
 
   return (
-    <ThemeProvider theme={darkTheme?Darktheme:Lighttheme}>
-      <GlobalStyle darkTheme={darkTheme} />
-      <Header SetDarkTheme={SetDarkTheme} darkTheme={darkTheme} />
+    <ThemeProvider theme={darkTheme ? Darktheme : Lighttheme}>
+      <GlobalStyle />
       <Router />
     </ThemeProvider>
   );

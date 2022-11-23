@@ -1,21 +1,26 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { change } from "../app/modules/ThemeChangeSlice";
 import Button from "./Button";
 import SideBar from "./SideBar";
 
-const Header = ({ SetDarkTheme, darkTheme }) => {
-  const [openSide, setOpenSide] = useState(null)
+const Header = (/*{ SetDarkTheme, darkTheme }*/) => {
+  const nav = useNavigate();
+  const dispatch = useDispatch();
+  const darkTheme = useSelector((state) => state.themeChange.darkTheme);
+  const [openSide, setOpenSide] = useState(null);
 
   return (
     <StHeader>
-      <Button size="1.5rem" onClick={()=>{setOpenSide(!openSide)}}>📁</Button>
-      <Button size="1.5rem">로고</Button>
-      <Button
-        size="1.5rem"
-        onClick={() => {
-          SetDarkTheme(!darkTheme);
-        }}
-      >
+      <Button size="1.5rem" onClick={() => setOpenSide(!openSide)}>
+        📁
+      </Button>
+      <Button size="1.5rem" onClick={() => nav("/")}>
+        로고
+      </Button>
+      <Button size="1.5rem" onClick={() => dispatch(change())}>
         {darkTheme ? "🌝" : "🌚"}
       </Button>
       <SideBar openSide={openSide} setOpenSide={setOpenSide} />

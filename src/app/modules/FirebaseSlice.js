@@ -1,10 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllFireStore } from "../api/Firebase";
+import { getAllFireStore, getOneFireStore } from "../api/Firebase";
 
-export const asyncGetFirebase = createAsyncThunk(
-  "FirebaseSlice/asyncGetFirebase",
+export const asyncGetAllFirebase = createAsyncThunk(
+  "FirebaseSlice/asyncGetAllFirebase",
   async () => {
     const resp = await getAllFireStore();
+    return resp;
+  }
+);
+
+export const asyncGetOneFirebase = createAsyncThunk(
+  "FirebaseSlice/asyncOneFirebase",
+  async (id) => {
+    const resp = await getOneFireStore(id);
     return resp;
   }
 );
@@ -12,20 +20,32 @@ export const asyncGetFirebase = createAsyncThunk(
 const FirebaseSlice = createSlice({
   name: "FirebaseSlice",
   initialState: {
+    value: "done",
     board: [],
-    value: 'done'
+    post: {},
   },
   extraReducers: (builder) => {
     builder
-      .addCase(asyncGetFirebase.pending, (state) => {
-        state.value = 'loading'
+      .addCase(asyncGetAllFirebase.pending, (state) => {
+        state.value = "loading";
       })
-      .addCase(asyncGetFirebase.fulfilled, (state, action) => {
-        state.board = action.payload
-        state.value = 'done'
+      .addCase(asyncGetAllFirebase.fulfilled, (state, action) => {
+        state.board = action.payload;
+        state.value = "done";
       })
-      .addCase(asyncGetFirebase.rejected, (state) => {
-        state.value = 'fail'
+      .addCase(asyncGetAllFirebase.rejected, (state) => {
+        state.value = "fail";
+      })
+
+      .addCase(asyncGetOneFirebase.pending, (state) => {
+        state.value = "loading";
+      })
+      .addCase(asyncGetOneFirebase.fulfilled, (state, action) => {
+        state.post = action.payload;
+        state.value = "done";
+      })
+      .addCase(asyncGetOneFirebase.rejected, (state) => {
+        state.value = "fail";
       });
   },
 });

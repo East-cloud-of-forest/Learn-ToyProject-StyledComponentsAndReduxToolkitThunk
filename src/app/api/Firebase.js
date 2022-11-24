@@ -26,7 +26,7 @@ export const getAllFireStore = async () => {
   const querySnapshot = await getDocs(collection(db, "Board"));
   let result = [];
   querySnapshot.forEach((doc) => {
-    const date = new Date(+doc.data().date).toLocaleDateString('zh')
+    const date = new Date(+doc.data().date).toLocaleDateString("zh");
     return result.push({
       id: doc.id,
       data: { ...doc.data(), date: date },
@@ -35,13 +35,10 @@ export const getAllFireStore = async () => {
   return result;
 };
 
-export const getOneFireStore = async () => {
-  const docRef = doc(db, "cities", "SF");
+export const getOneFireStore = async (id) => {
+  const docRef = doc(db, "Board", id);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
-    console.log("Document data:", docSnap.data());
     return docSnap.data();
-  } else {
-    console.log("No such document!");
   }
 };

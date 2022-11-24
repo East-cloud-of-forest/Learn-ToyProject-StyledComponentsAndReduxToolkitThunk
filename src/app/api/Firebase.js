@@ -1,6 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore, doc, getDoc, getDocs, collection } from "firebase/firestore";
+// import { getAnalytics } from "firebase/analytics";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  getDocs,
+  collection,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -13,19 +19,20 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
 export const getAllFireStore = async () => {
   const querySnapshot = await getDocs(collection(db, "Board"));
-  let result = []
+  let result = [];
   querySnapshot.forEach((doc) => {
+    const date = new Date(+doc.data().date).toLocaleDateString('zh')
     return result.push({
       id: doc.id,
-      data: doc.data()
-    })
+      data: { ...doc.data(), date: date },
+    });
   });
-  return result
+  return result;
 };
 
 export const getOneFireStore = async () => {

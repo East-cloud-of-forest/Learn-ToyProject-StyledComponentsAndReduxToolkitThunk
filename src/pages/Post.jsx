@@ -12,7 +12,6 @@ const Post = () => {
     dispatch(asyncGetOneFirebase(params.id));
   }, [dispatch, params.id]);
   const post = useSelector((state) => state.Firebase.post);
-  console.log(post);
 
   return (
     <StPost>
@@ -45,8 +44,6 @@ const Post = () => {
 };
 
 const StPost = styled.div`
-  max-width: 1000px;
-  margin: auto;
   hr {
     margin: 2rem 0;
     height: 1px;

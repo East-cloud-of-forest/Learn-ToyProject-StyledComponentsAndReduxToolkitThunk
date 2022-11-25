@@ -3,7 +3,8 @@ import Board from "../pages/Board";
 import Main from "../pages/Main";
 import Post from "../pages/Post";
 import Header from "./Header";
-import PostList from "./PostList";
+import PostList from "../pages/PostList";
+import Wtite from "../pages/Wtite";
 
 const Router = () => {
   return (
@@ -15,6 +16,7 @@ const Router = () => {
           <Route path="" index element={<PostList />} />
           <Route path=":id" element={<Post />} />
         </Route>
+        <Route path="/write" element={<Wtite />} />
       </Routes>
     </BrowserRouter>
   );

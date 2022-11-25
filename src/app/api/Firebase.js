@@ -6,6 +6,12 @@ import {
   getDoc,
   getDocs,
   collection,
+  addDoc,
+  orderBy,
+  limit,
+  query,
+  startAfter,
+  getCountFromServer,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -23,15 +29,48 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export const getAllFireStore = async () => {
-  const querySnapshot = await getDocs(collection(db, "Board"));
-  let result = [];
+  let result = {
+    board: [],
+    start: null,
+    counter: 0
+  };
+  const boardRef = collection(db, "Board");
+  let q = query(boardRef, orderBy("date", "desc"), limit(10));
+  const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     const date = new Date(+doc.data().date).toLocaleDateString("zh");
-    return result.push({
+    result.board.push({
       id: doc.id,
       data: { ...doc.data(), date: date },
     });
   });
+  result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
+  const snapshot = await getCountFromServer(boardRef);
+  result.counter = snapshot.data().count
+  return result;
+};
+
+export const getAddAllFireStore = async (start, size) => {
+  let result = {
+    board: [],
+    start: null,
+  };
+  const boardRef = collection(db, "Board");
+  let q = query(
+    boardRef,
+    orderBy("date", "desc"),
+    limit(size),
+    startAfter(start)
+  );
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    const date = new Date(+doc.data().date).toLocaleDateString("zh");
+    result.board.push({
+      id: doc.id,
+      data: { ...doc.data(), date: date },
+    });
+  });
+  result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
   return result;
 };
 
@@ -41,4 +80,9 @@ export const getOneFireStore = async (id) => {
   if (docSnap.exists()) {
     return docSnap.data();
   }
+};
+
+export const postFireStore = async (data) => {
+  await addDoc(collection(db, "Board"), data);
+  return true;
 };

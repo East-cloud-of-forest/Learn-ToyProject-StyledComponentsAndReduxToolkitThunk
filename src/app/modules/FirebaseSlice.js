@@ -3,6 +3,7 @@ import {
   getAddAllFireStore,
   getAllFireStore,
   getOneFireStore,
+  postAddLike,
   postFireStore,
 } from "../api/Firebase";
 
@@ -26,6 +27,14 @@ export const asyncGetOneFirebase = createAsyncThunk(
   "FirebaseSlice/asyncOneFirebase",
   async (id) => {
     const resp = await getOneFireStore(id);
+    return resp;
+  }
+);
+
+export const asyncPostAddLikeFirebase = createAsyncThunk(
+  "FirebaseSlice/asyncPostAddLikeFirebase",
+  async ({ id, like }) => {
+    const resp = await postAddLike(id, like);
     return resp;
   }
 );
@@ -84,6 +93,18 @@ const FirebaseSlice = createSlice({
         state.status = "done";
       })
       .addCase(asyncGetOneFirebase.rejected, (state) => {
+        state.status = "fail";
+      })
+
+      // 좋아요 버튼 누르기
+      .addCase(asyncPostAddLikeFirebase.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(asyncPostAddLikeFirebase.fulfilled, (state, action) => {
+        state.post.like = action.payload;
+        state.status = "done";
+      })
+      .addCase(asyncPostAddLikeFirebase.rejected, (state) => {
         state.status = "fail";
       })
 

@@ -2,7 +2,10 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { asyncGetOneFirebase } from "../app/modules/FirebaseSlice";
+import {
+  asyncGetOneFirebase,
+  asyncPostAddLikeFirebase,
+} from "../app/modules/FirebaseSlice";
 import Button from "../components/Button";
 
 const Post = () => {
@@ -12,6 +15,9 @@ const Post = () => {
   useEffect(() => {
     dispatch(asyncGetOneFirebase(params.id));
   }, [dispatch, params.id]);
+  const addLike = () => {
+    dispatch(asyncPostAddLikeFirebase({ id: params.id, like: post.like }));
+  };
 
   return (
     <StPost>
@@ -36,7 +42,14 @@ const Post = () => {
       <PostBody>
         {post.text}
         <br></br>
-        <Button size="1.2rem">좋아요 버튼</Button>
+        <Button
+          size="1.2rem"
+          onClick={() => {
+            addLike();
+          }}
+        >
+          좋아요 👍
+        </Button>
       </PostBody>
       <hr />
     </StPost>

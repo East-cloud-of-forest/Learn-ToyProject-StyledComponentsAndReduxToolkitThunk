@@ -99,6 +99,14 @@ export const getOneFireStore = async (id) => {
   }
 };
 
+export const postAddLike = async (id, like) => {
+  const docRef = doc(db, "Board", id);
+  await updateDoc(docRef, {
+    like: like + 1,
+  });
+  return like + 1
+}
+
 // 게시글 쓰기
 export const postFireStore = async (data) => {
   await addDoc(collection(db, "Board"), data);

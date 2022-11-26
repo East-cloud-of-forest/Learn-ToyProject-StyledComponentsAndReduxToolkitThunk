@@ -75,7 +75,7 @@ const FirebaseSlice = createSlice({
         state.status = "fail";
       })
 
-      // 글 하나 조회
+      // 글 내용 조회
       .addCase(asyncGetOneFirebase.pending, (state) => {
         state.status = "loading";
       })

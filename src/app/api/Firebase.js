@@ -12,6 +12,7 @@ import {
   query,
   startAfter,
   getCountFromServer,
+  updateDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -28,6 +29,7 @@ const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
+// 게시글 전체 받아오기
 export const getAllFireStore = async () => {
   let result = {
     board: [],
@@ -51,6 +53,7 @@ export const getAllFireStore = async () => {
   return result;
 };
 
+// 게시글 추가 받아오기
 export const getAddAllFireStore = async (start, size) => {
   let result = {
     board: [],
@@ -76,16 +79,27 @@ export const getAddAllFireStore = async (start, size) => {
   return result;
 };
 
+// 게시글 내용 받아오기
 export const getOneFireStore = async (id) => {
   const docRef = doc(db, "Board", id);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
+    // 조회수 올리기
+    await updateDoc(docRef, {
+      view: docSnap.data().view + 1,
+    });
     const date = new Date(+docSnap.data().date).toLocaleDateString("zh");
     const ip = docSnap.data().ip.split(".");
-    return { ...docSnap.data(), date: date, ip: ip[0] + "." + ip[1] };
+    return {
+      ...docSnap.data(),
+      date: date,
+      ip: ip[0] + "." + ip[1],
+      view: docSnap.data().view + 1,
+    };
   }
 };
 
+// 게시글 쓰기
 export const postFireStore = async (data) => {
   await addDoc(collection(db, "Board"), data);
   return true;

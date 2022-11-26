@@ -8,10 +8,10 @@ import Button from "../components/Button";
 const Post = () => {
   const params = useParams();
   const dispatch = useDispatch();
+  const post = useSelector((state) => state.Firebase.post);
   useEffect(() => {
     dispatch(asyncGetOneFirebase(params.id));
   }, [dispatch, params.id]);
-  const post = useSelector((state) => state.Firebase.post);
 
   return (
     <StPost>
@@ -36,7 +36,7 @@ const Post = () => {
       <PostBody>
         {post.text}
         <br></br>
-        <Button size='1.2rem'>좋아요 버튼</Button>
+        <Button size="1.2rem">좋아요 버튼</Button>
       </PostBody>
       <hr />
     </StPost>

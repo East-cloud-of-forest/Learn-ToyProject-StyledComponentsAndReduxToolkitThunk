@@ -13,18 +13,20 @@ const Header = (/*{ SetDarkTheme, darkTheme }*/) => {
   const [openSide, setOpenSide] = useState(null);
 
   return (
-    <StHeader>
-      <Button size="1.5rem" onClick={() => setOpenSide(!openSide)}>
-        📁
-      </Button>
-      <Button size="1.5rem" onClick={() => nav("/")}>
-        로고
-      </Button>
-      <Button size="1.5rem" onClick={() => dispatch(change())}>
-        {darkTheme ? "🌝" : "🌚"}
-      </Button>
+    <>
       <SideBar openSide={openSide} setOpenSide={setOpenSide} />
-    </StHeader>
+      <StHeader>
+        <Button size="1.5rem" onClick={() => setOpenSide(!openSide)}>
+          📁
+        </Button>
+        <Button size="1.5rem" onClick={() => nav("/")}>
+          로고
+        </Button>
+        <Button size="1.5rem" onClick={() => dispatch(change())}>
+          {darkTheme ? "🌝" : "🌚"}
+        </Button>
+      </StHeader>
+    </>
   );
 };
 
@@ -33,11 +35,12 @@ const StHeader = styled.header`
   padding: 1rem;
   display: flex;
   justify-content: space-between;
-  position: absolute;
+  position: fixed;
   width: 100%;
   top: 0;
   left: 0;
   box-sizing: border-box;
+  z-index: 2;
 `;
 
 export default Header;

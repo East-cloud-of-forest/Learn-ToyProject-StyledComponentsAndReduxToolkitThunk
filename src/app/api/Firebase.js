@@ -32,21 +32,22 @@ export const getAllFireStore = async () => {
   let result = {
     board: [],
     start: null,
-    counter: 0
+    counter: 0,
   };
   const boardRef = collection(db, "Board");
   let q = query(boardRef, orderBy("date", "desc"), limit(10));
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     const date = new Date(+doc.data().date).toLocaleDateString("zh");
+    const ip = doc.data().ip.split(".");
     result.board.push({
       id: doc.id,
-      data: { ...doc.data(), date: date },
+      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1] },
     });
   });
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
   const snapshot = await getCountFromServer(boardRef);
-  result.counter = snapshot.data().count
+  result.counter = snapshot.data().count;
   return result;
 };
 
@@ -65,9 +66,10 @@ export const getAddAllFireStore = async (start, size) => {
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
     const date = new Date(+doc.data().date).toLocaleDateString("zh");
+    const ip = doc.data().ip.split(".");
     result.board.push({
       id: doc.id,
-      data: { ...doc.data(), date: date },
+      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1] },
     });
   });
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -78,7 +80,9 @@ export const getOneFireStore = async (id) => {
   const docRef = doc(db, "Board", id);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
-    return docSnap.data();
+    const date = new Date(+docSnap.data().date).toLocaleDateString("zh");
+    const ip = docSnap.data().ip.split(".");
+    return { ...docSnap.data(), date: date, ip: ip[0] + "." + ip[1] };
   }
 };
 

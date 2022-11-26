@@ -37,13 +37,15 @@ const SideBar = ({ openSide, setOpenSide }) => {
   );
 };
 const SidebarBackground = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
   visibility: hidden;
   cursor: pointer;
+  backdrop-filter: blur(5px);
+  z-index: 3;
   background-color: ${({ theme }) =>
     theme.backgroundColor === "#ffffff"
       ? "rgba(0,0,0,0.1)"
@@ -83,13 +85,14 @@ const SidebarBackground = styled.div`
 `;
 
 const StSideBar = styled.div`
+  position: absolute;
   background-color: ${({ theme }) => theme.backgroundColor};
   width: 26rem;
   height: 100%;
   box-shadow: 5px 0px 10px ${({ theme }) => theme.shadowColor};
   transition: color, background-color 0.2s;
   transform-origin: left;
-  transform: ${({ openSide }) => (openSide ? "scale(1, 1)" : "scale(0, 1)")};
+  transform: ${({ openSide }) => (openSide ? "translate(0%, 0%)" : "translate(-100%, 0%)")};
   transition: transform 0.3s;
   cursor: default;
   padding: 1rem;

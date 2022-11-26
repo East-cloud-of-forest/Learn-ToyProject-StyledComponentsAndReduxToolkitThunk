@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -7,6 +7,7 @@ import {
   asyncPostAddLikeFirebase,
 } from "../app/modules/FirebaseSlice";
 import Button from "../components/Button";
+import Modal from "../components/Modal";
 
 const Post = () => {
   const params = useParams();
@@ -17,6 +18,16 @@ const Post = () => {
   }, [dispatch, params.id]);
   const addLike = () => {
     dispatch(asyncPostAddLikeFirebase({ id: params.id, like: post.like }));
+  };
+  const [password, setPassword] = useState("");
+  // const state = useSelector((state) => state.Firebase.status);
+  // console.log(state)
+  const [loginOpen, setLoginOpen] = useState(null);
+  const closeLogin = () => {
+    setLoginOpen(!loginOpen);
+    setTimeout(() => {
+      setPassword("");
+    }, 300);
   };
 
   return (
@@ -51,7 +62,55 @@ const Post = () => {
           좋아요 👍
         </Button>
       </PostBody>
+      <PostFooter>
+        <Button
+          onClick={() => {
+            setLoginOpen(!loginOpen);
+          }}
+        >
+          수정
+        </Button>
+        <Button>삭제</Button>
+      </PostFooter>
       <hr />
+      <Modal
+        open={loginOpen}
+        onClick={() => {
+          closeLogin()
+        }}
+        center
+      >
+        <Login
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <input
+            type="password"
+            autoComplete="on"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <div>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                closeLogin()
+              }}
+            >
+              취소
+            </Button>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+            >
+              확인
+            </Button>
+          </div>
+        </Login>
+      </Modal>
     </StPost>
   );
 };
@@ -114,6 +173,41 @@ const PostBody = styled.div`
     margin: auto;
     padding: 1.5rem;
     margin-top: 3rem;
+  }
+`;
+
+const PostFooter = styled.div`
+  text-align: right;
+  button {
+    margin: 0 0.5rem;
+  }
+`;
+
+const Login = styled.form`
+  width: 270px;
+  height: 150px;
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border: 1px solid;
+  border-radius: 7px;
+  cursor: default;
+  box-sizing: border-box;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+
+  input {
+    background-color: inherit;
+    border-width: 0 0 1px 0;
+    outline: none;
+    color: ${({ theme }) => theme.color};
+    text-align: center;
+  }
+  div {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
   }
 `;
 

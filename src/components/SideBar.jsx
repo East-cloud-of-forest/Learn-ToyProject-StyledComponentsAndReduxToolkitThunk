@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "./Button";
+import Modal from "./Modal";
 
 const SideBar = ({ openSide, setOpenSide }) => {
   const nav = useNavigate();
@@ -10,8 +11,8 @@ const SideBar = ({ openSide, setOpenSide }) => {
   };
 
   return (
-    <SidebarBackground
-      openSide={openSide}
+    <Modal
+      open={openSide}
       onClick={() => setOpenSide(!openSide)}
     >
       <StSideBar openSide={openSide} onClick={(e) => e.stopPropagation()}>
@@ -33,56 +34,9 @@ const SideBar = ({ openSide, setOpenSide }) => {
           </li>
         </ul>
       </StSideBar>
-    </SidebarBackground>
+    </Modal>
   );
 };
-const SidebarBackground = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  visibility: hidden;
-  cursor: pointer;
-  backdrop-filter: blur(5px);
-  z-index: 3;
-  background-color: ${({ theme }) =>
-    theme.backgroundColor === "#ffffff"
-      ? "rgba(0,0,0,0.1)"
-      : "rgba(255,255,255,0.1)"};
-  ${({ openSide }) =>
-    openSide == null
-      ? null
-      : openSide
-      ? "animation: open 0.3s forwards;"
-      : "animation: close 0.3s forwards;"};
-
-  @keyframes close {
-    0% {
-      opacity: 1;
-      visibility: visible;
-    }
-    99% {
-      opacity: 0;
-      visibility: visible;
-    }
-    100% {
-      opacity: 0;
-      visibility: hidden;
-    }
-  }
-
-  @keyframes open {
-    0% {
-      opacity: 0;
-      visibility: hidden;
-    }
-    100% {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-`;
 
 const StSideBar = styled.div`
   position: absolute;

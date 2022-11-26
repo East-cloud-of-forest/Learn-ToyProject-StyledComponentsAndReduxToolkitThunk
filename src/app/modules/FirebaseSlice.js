@@ -98,7 +98,7 @@ const FirebaseSlice = createSlice({
 
       // 좋아요 버튼 누르기
       .addCase(asyncPostAddLikeFirebase.pending, (state) => {
-        state.status = "loading";
+        state.status = "likeloading";
       })
       .addCase(asyncPostAddLikeFirebase.fulfilled, (state, action) => {
         state.post.like = action.payload;

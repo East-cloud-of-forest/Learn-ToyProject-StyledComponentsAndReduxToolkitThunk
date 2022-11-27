@@ -9,7 +9,6 @@ const PostList = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const state = useSelector((state) => state.board);
-  console.log(state)
   useEffect(() => {
     dispatch(asyncGetAllFirebase());
   }, [dispatch]);

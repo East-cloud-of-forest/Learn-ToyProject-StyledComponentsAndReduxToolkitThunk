@@ -46,7 +46,7 @@ const GetBoardDataSlice = createSlice({
         state.status = "loading";
       })
       .addCase(asyncGetAddAllFirebase.fulfilled, (state, action) => {
-        state.board = [...state.board, ...action.payload.board];
+        state.list = [...state.list, ...action.payload.board];
         state.start = action.payload.start;
         state.status = "done";
       })

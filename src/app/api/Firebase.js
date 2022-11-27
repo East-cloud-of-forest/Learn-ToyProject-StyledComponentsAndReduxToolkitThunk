@@ -101,6 +101,15 @@ export const getOneFireStore = async (id) => {
   }
 };
 
+// 게시글의 비밀번호 맞는지 확인
+export const loginPostFirebase = async (id, password) => {
+  const docRef = doc(db, "Board", id);
+  const docSnap = await getDoc(docRef);
+  if (docSnap.exists()) {
+    return docSnap.data().password === password
+  }
+}
+
 // 좋아요 누르기
 export const postAddLike = async (id, like) => {
   const docRef = doc(db, "Board", id);

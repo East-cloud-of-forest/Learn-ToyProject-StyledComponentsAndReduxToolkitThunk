@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { loginPostFirebase } from "../app/api/Firebase";
 import {
   asyncGetOneFirebase,
   asyncPostAddLikeFirebase,
@@ -12,6 +13,7 @@ import Modal from "../components/Modal";
 const Post = () => {
   const params = useParams();
   const dispatch = useDispatch();
+  const nav = useNavigate()
   const post = useSelector((state) => state.post.data);
   useEffect(() => {
     dispatch(asyncGetOneFirebase(params.id));
@@ -19,16 +21,29 @@ const Post = () => {
   const addLike = () => {
     dispatch(asyncPostAddLikeFirebase({ id: params.id, like: post.like }));
   };
+
+  // 수정 삭제 시 비밀번호 입력 모달 여닫기
   const [password, setPassword] = useState("");
-  // const state = useSelector((state) => state.Firebase.status);
-  // console.log(state)
-  const [loginOpen, setLoginOpen] = useState(null);
+  const [modalOpen, setModalOpen] = useState(null);
+  const [failLogin, setFailLogin] = useState(false)
   const closeLogin = () => {
-    setLoginOpen(!loginOpen);
+    setModalOpen(!modalOpen);
     setTimeout(() => {
       setPassword("");
+      setFailLogin(false)
     }, 300);
   };
+  // 비밀번호 입력시 검증
+  const loginFirebasePost = async () => {
+    setFailLogin(false)
+    const result = await loginPostFirebase(params.id, password)
+    console.log(result)
+    if (result) {
+      nav('/')
+    } else {
+      setFailLogin(!result)
+    }
+  }
 
   return (
     <StPost>
@@ -65,7 +80,7 @@ const Post = () => {
       <PostFooter>
         <Button
           onClick={() => {
-            setLoginOpen(!loginOpen);
+            setModalOpen(!modalOpen);
           }}
         >
           수정
@@ -74,7 +89,7 @@ const Post = () => {
       </PostFooter>
       <hr />
       <Modal
-        open={loginOpen}
+        open={modalOpen}
         onClick={() => {
           closeLogin();
         }}
@@ -104,10 +119,12 @@ const Post = () => {
             <Button
               onClick={(e) => {
                 e.preventDefault();
+                loginFirebasePost()
               }}
             >
               확인
             </Button>
+            {failLogin&&<span>비밀번호가 맞지 않습니다.</span>}
           </div>
         </Login>
       </Modal>
@@ -208,6 +225,24 @@ const Login = styled.form`
     display: flex;
     justify-content: space-around;
     width: 100%;
+    position: relative;
+    span {
+      position: absolute;
+      bottom: -75%;
+      font-size: 0.8rem;
+      color: red;
+      animation: error 0.5s;
+    }
+    @keyframes error {
+      0% {transform:translate(0%, 0%)}
+      15% {transform:translate(-10%, 0%)}
+      30% {transform:translate(10%, 0%)}
+      45% {transform:translate(-10%, 0%)}
+      60% {transform:translate(10%, 0%)}
+      75% {transform:translate(-10%, 0%)}
+      90% {transform:translate(10%, 0%)}
+      100% {transform:translate(0%, 0%)}
+    }
   }
 `;
 

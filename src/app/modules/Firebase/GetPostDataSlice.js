@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getOneFireStore, postAddLike } from "../../api/Firebase";
+import {
+  getOneFireStore,
+  postAddLike,
+} from "../../api/Firebase";
 
 export const asyncGetOneFirebase = createAsyncThunk(
   "GetPostDataSlice/asyncOneFirebase",
@@ -47,7 +50,7 @@ const GetPostDataSlice = createSlice({
       })
       .addCase(asyncPostAddLikeFirebase.rejected, (state) => {
         state.status = "fail";
-      })
+      });
   },
 });
 

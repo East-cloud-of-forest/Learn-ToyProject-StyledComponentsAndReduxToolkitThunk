@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { loginPostFirebase } from "../app/api/Firebase";
 import {
+  asyncDeleteFirebase,
   asyncGetOneFirebase,
   asyncPostAddLikeFirebase,
 } from "../app/modules/Firebase/GetPostDataSlice";
@@ -13,7 +14,7 @@ import Modal from "../components/Modal";
 const Post = () => {
   const params = useParams();
   const dispatch = useDispatch();
-  const nav = useNavigate()
+  const nav = useNavigate();
   const post = useSelector((state) => state.post.data);
   useEffect(() => {
     dispatch(asyncGetOneFirebase(params.id));
@@ -25,25 +26,34 @@ const Post = () => {
   // 수정 삭제 시 비밀번호 입력 모달 여닫기
   const [password, setPassword] = useState("");
   const [modalOpen, setModalOpen] = useState(null);
-  const [failLogin, setFailLogin] = useState(false)
+  const [failLogin, setFailLogin] = useState(false);
+  const [loginMode, setLoginMode] = useState(null);
   const closeLogin = () => {
     setModalOpen(!modalOpen);
     setTimeout(() => {
       setPassword("");
-      setFailLogin(false)
+      setFailLogin(false);
+      setLoginMode(null)
     }, 300);
   };
   // 비밀번호 입력시 검증
+  const status = useSelector((state) => state.post.status)
+  console.log(status)
   const loginFirebasePost = async () => {
-    setFailLogin(false)
-    const result = await loginPostFirebase(params.id, password)
-    console.log(result)
+    setFailLogin(false);
+    const result = await loginPostFirebase(params.id, password);
     if (result) {
-      nav('/')
+      if (loginMode==='delete') {
+        await dispatch(asyncDeleteFirebase(params.id));
+        nav('/board')
+      } else if (loginMode==='edit') {
+        console.log('edit')
+        // nav("/");
+      }
     } else {
-      setFailLogin(!result)
+      setFailLogin(!result);
     }
-  }
+  };
 
   return (
     <StPost>
@@ -81,11 +91,19 @@ const Post = () => {
         <Button
           onClick={() => {
             setModalOpen(!modalOpen);
+            setLoginMode("edit");
           }}
         >
           수정
         </Button>
-        <Button>삭제</Button>
+        <Button
+          onClick={() => {
+            setModalOpen(!modalOpen);
+            setLoginMode("delete");
+          }}
+        >
+          삭제
+        </Button>
       </PostFooter>
       <hr />
       <Modal
@@ -119,12 +137,12 @@ const Post = () => {
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                loginFirebasePost()
+                loginFirebasePost();
               }}
             >
               확인
             </Button>
-            {failLogin&&<span>비밀번호가 맞지 않습니다.</span>}
+            {failLogin && <span>비밀번호가 맞지 않습니다.</span>}
           </div>
         </Login>
       </Modal>
@@ -234,14 +252,30 @@ const Login = styled.form`
       animation: error 0.5s;
     }
     @keyframes error {
-      0% {transform:translate(0%, 0%)}
-      15% {transform:translate(-10%, 0%)}
-      30% {transform:translate(10%, 0%)}
-      45% {transform:translate(-10%, 0%)}
-      60% {transform:translate(10%, 0%)}
-      75% {transform:translate(-10%, 0%)}
-      90% {transform:translate(10%, 0%)}
-      100% {transform:translate(0%, 0%)}
+      0% {
+        transform: translate(0%, 0%);
+      }
+      15% {
+        transform: translate(-10%, 0%);
+      }
+      30% {
+        transform: translate(10%, 0%);
+      }
+      45% {
+        transform: translate(-10%, 0%);
+      }
+      60% {
+        transform: translate(10%, 0%);
+      }
+      75% {
+        transform: translate(-10%, 0%);
+      }
+      90% {
+        transform: translate(10%, 0%);
+      }
+      100% {
+        transform: translate(0%, 0%);
+      }
     }
   }
 `;

@@ -1,8 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import {
-  getOneFireStore,
-  postAddLike,
-} from "../../api/Firebase";
+import { getOneFireStore, postAddLike, postDelete } from "../../api/Firebase";
 
 export const asyncGetOneFirebase = createAsyncThunk(
   "GetPostDataSlice/asyncOneFirebase",
@@ -16,6 +13,14 @@ export const asyncPostAddLikeFirebase = createAsyncThunk(
   "GetPostDataSlice/asyncPostAddLikeFirebase",
   async ({ id, like }) => {
     const resp = await postAddLike(id, like);
+    return resp;
+  }
+);
+
+export const asyncDeleteFirebase = createAsyncThunk(
+  "GetPostDataSlice/asyncDeleteFirebase",
+  async (id) => {
+    const resp = await postDelete(id);
     return resp;
   }
 );
@@ -49,6 +54,17 @@ const GetPostDataSlice = createSlice({
         state.status = "done";
       })
       .addCase(asyncPostAddLikeFirebase.rejected, (state) => {
+        state.status = "fail";
+      })
+
+      // 좋아요 버튼 누르기
+      .addCase(asyncDeleteFirebase.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(asyncDeleteFirebase.fulfilled, (state) => {
+        state.status = "done";
+      })
+      .addCase(asyncDeleteFirebase.rejected, (state) => {
         state.status = "fail";
       });
   },

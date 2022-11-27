@@ -13,6 +13,7 @@ import {
   startAfter,
   getCountFromServer,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -124,3 +125,9 @@ export const postFireStore = async (data) => {
   await addDoc(collection(db, "Board"), data);
   return true;
 };
+
+// 게시글 삭제
+export const postDelete = async (id) => {
+  await deleteDoc(doc(db, "Board", id));
+  return true
+}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { asyncPostFirebase } from "../app/modules/FirebaseSlice";
+import { asyncPostFirebase } from "../app/modules/Firebase/WritePostSlice";
 import Button from "../components/Button";
 
 const Wtite = () => {
@@ -13,8 +13,8 @@ const Wtite = () => {
   const [head, setHead] = useState("심심해서");
   const nav = useNavigate();
   const dispatch = useDispatch();
-  const ip = useSelector((state) => state.GetIp.value);
-  const status = useSelector((state) => state.GetIp.status);
+  const ip = useSelector((state) => state.ip.value);
+  const status = useSelector((state) => state.ip.status);
 
   const changeValue = (set, e) => {
     set(e.target.value);

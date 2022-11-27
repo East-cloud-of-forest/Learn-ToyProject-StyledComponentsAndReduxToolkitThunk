@@ -5,14 +5,14 @@ import styled from "styled-components";
 import {
   asyncGetOneFirebase,
   asyncPostAddLikeFirebase,
-} from "../app/modules/FirebaseSlice";
+} from "../app/modules/Firebase/GetPostDataSlice";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 
 const Post = () => {
   const params = useParams();
   const dispatch = useDispatch();
-  const post = useSelector((state) => state.Firebase.post);
+  const post = useSelector((state) => state.post.data);
   useEffect(() => {
     dispatch(asyncGetOneFirebase(params.id));
   }, [dispatch, params.id]);
@@ -76,7 +76,7 @@ const Post = () => {
       <Modal
         open={loginOpen}
         onClick={() => {
-          closeLogin()
+          closeLogin();
         }}
         center
       >
@@ -96,7 +96,7 @@ const Post = () => {
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                closeLogin()
+                closeLogin();
               }}
             >
               취소

@@ -2,16 +2,14 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import {
-  asyncGetAddAllFirebase,
-  asyncGetAllFirebase,
-} from "../app/modules/FirebaseSlice";
+import { asyncGetAddAllFirebase, asyncGetAllFirebase } from "../app/modules/Firebase/GetBoardDataSlice";
 import Button from "../components/Button";
 
 const PostList = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
-  const state = useSelector((state) => state.Firebase);
+  const state = useSelector((state) => state.board);
+  console.log(state)
   useEffect(() => {
     dispatch(asyncGetAllFirebase());
   }, [dispatch]);
@@ -38,7 +36,7 @@ const PostList = () => {
           </tr>
         </thead>
         <tbody>
-          {state.board.map((x) => (
+          {state.list.map((x) => (
             <tr key={x.id}>
               <td>
                 <span>{x.data.head}</span>
@@ -67,7 +65,7 @@ const PostList = () => {
           ))}
         </tbody>
       </table>
-      {state.board.length !== state.counter && (
+      {state.list.length !== state.counter && (
         <Button
           onClick={() => {
             addList();

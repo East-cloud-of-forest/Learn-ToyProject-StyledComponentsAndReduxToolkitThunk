@@ -44,10 +44,11 @@ export const getAllFireStore = async () => {
     const ip = doc.data().ip.split(".");
     result.board.push({
       id: doc.id,
-      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1] },
+      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1], password: '' },
     });
   });
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
+  // 게시글 총 갯수
   const snapshot = await getCountFromServer(boardRef);
   result.counter = snapshot.data().count;
   return result;
@@ -72,7 +73,7 @@ export const getAddAllFireStore = async (start, size) => {
     const ip = doc.data().ip.split(".");
     result.board.push({
       id: doc.id,
-      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1] },
+      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1], password: '' },
     });
   });
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -88,17 +89,19 @@ export const getOneFireStore = async (id) => {
     await updateDoc(docRef, {
       view: docSnap.data().view + 1,
     });
-    const date = new Date(+docSnap.data().date).toLocaleDateString("zh");
+    const date = new Date(+docSnap.data().date).toLocaleString();
     const ip = docSnap.data().ip.split(".");
     return {
       ...docSnap.data(),
       date: date,
       ip: ip[0] + "." + ip[1],
       view: docSnap.data().view + 1,
+      password: ''
     };
   }
 };
 
+// 좋아요 누르기
 export const postAddLike = async (id, like) => {
   const docRef = doc(db, "Board", id);
   await updateDoc(docRef, {

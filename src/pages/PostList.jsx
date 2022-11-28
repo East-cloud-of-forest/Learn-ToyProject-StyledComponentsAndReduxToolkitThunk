@@ -2,7 +2,10 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { asyncGetAddAllFirebase, asyncGetAllFirebase } from "../app/modules/Firebase/GetBoardDataSlice";
+import {
+  asyncGetAddAllFirebase,
+  asyncGetAllFirebase,
+} from "../app/modules/Firebase/GetBoardDataSlice";
 import Button from "../components/Button";
 
 const PostList = () => {
@@ -42,13 +45,17 @@ const PostList = () => {
               </td>
               <td>
                 <div>
-                  <span
-                    onClick={() => {
-                      nav("/board/" + x.id);
-                    }}
-                  >
-                    <div>{x.data.title}</div>
-                  </span>
+                  <div>
+                    <div>
+                      <span
+                        onClick={() => {
+                          nav("/board/" + x.id);
+                        }}
+                      >
+                        {x.data.title}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </td>
               <td>
@@ -110,18 +117,21 @@ const StPostList = styled.div`
         > div {
           text-align: left;
           display: flex;
-          span {
+          > div {
             flex: 1;
             width: 1px;
-            &:hover {
-              text-decoration: underline;
-              cursor: pointer;
-            }
             div {
               text-overflow: ellipsis;
               overflow: hidden;
               white-space: nowrap;
               word-break: break-all;
+              span {
+                width: 100%;
+                &:hover {
+                  text-decoration: underline;
+                  cursor: pointer;
+                }
+              }
             }
           }
         }

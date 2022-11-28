@@ -33,21 +33,23 @@ const Post = () => {
     setTimeout(() => {
       setPassword("");
       setFailLogin(false);
-      setLoginMode(null)
+      setLoginMode(null);
     }, 300);
   };
   // 비밀번호 입력시 검증
-  const status = useSelector((state) => state.post.status)
-  console.log(status)
+  const status = useSelector((state) => state.post.status);
+  console.log(status);
   const loginFirebasePost = async () => {
     setFailLogin(false);
     const result = await loginPostFirebase(params.id, password);
     if (result) {
-      if (loginMode==='delete') {
-        await dispatch(asyncDeleteFirebase(params.id));
-        nav('/board')
-      } else if (loginMode==='edit') {
-        console.log('edit')
+      if (loginMode === "delete") {
+        const deletePost = dispatch(asyncDeleteFirebase(params.id));
+        deletePost.then(() => {
+          nav("/board");
+        });
+      } else if (loginMode === "edit") {
+        console.log("edit");
         // nav("/");
       }
     } else {

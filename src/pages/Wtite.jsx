@@ -14,13 +14,12 @@ const Wtite = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const ip = useSelector((state) => state.ip.value);
-  const status = useSelector((state) => state.ip.status);
 
   const changeValue = (set, e) => {
     set(e.target.value);
   };
 
-  const sendPost = () => {
+  const sendPost = async () => {
     const data = {
       date: new Date().getTime(),
       head: head,
@@ -32,8 +31,10 @@ const Wtite = () => {
       title: title,
       view: 0,
     };
-    dispatch(asyncPostFirebase(data));
-    if (status==='done') {nav('/board/')}
+    let write = dispatch(asyncPostFirebase(data));
+    write.then(()=>{
+      nav('/board/')
+    })
   };
 
   return (

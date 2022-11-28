@@ -1,16 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { asyncPostFirebase } from "../app/modules/Firebase/WritePostSlice";
+import {
+  asyncEditFirebase,
+  asyncPostFirebase,
+} from "../app/modules/Firebase/WritePostSlice";
 import Button from "../components/Button";
 
 const Wtite = () => {
+  const params = useParams();
+  const postId = params.id;
+  const post = useSelector((state) => state.post.data);
+  const writePostFu = (data) => {
+    if (postId === undefined) {
+      return dispatch(asyncPostFirebase(data));
+    } else {
+      return dispatch(asyncEditFirebase({ data: data, id: postId }));
+    }
+  };
+  useEffect(() => {
+    if (postId === undefined) return;
+    setTitle(post.title);
+    setText(post.text);
+    setId(post.name);
+    setHead(post.head);
+    setLike(post.like);
+    setView(post.view);
+    setDate(post.date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [head, setHead] = useState("심심해서");
+  const [like, setLike] = useState(0);
+  const [view, setView] = useState(0);
+  const [date, setDate] = useState(null);
   const nav = useNavigate();
   const dispatch = useDispatch();
   const ip = useSelector((state) => state.ip.value);
@@ -19,22 +47,21 @@ const Wtite = () => {
     set(e.target.value);
   };
 
-  const sendPost = async () => {
+  const sendPost = () => {
     const data = {
-      date: new Date().getTime(),
+      date: date === null ? new Date().getTime() : date,
       head: head,
       ip: ip,
-      like: 0,
+      like: like,
       name: id,
       password: password,
       text: text,
       title: title,
-      view: 0,
+      view: view,
     };
-    let write = dispatch(asyncPostFirebase(data));
-    write.then(()=>{
-      nav('/board/')
-    })
+    writePostFu(data).then(() => {
+      nav("/board/");
+    });
   };
 
   return (

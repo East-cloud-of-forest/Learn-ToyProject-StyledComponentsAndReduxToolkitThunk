@@ -14,6 +14,7 @@ import {
   getCountFromServer,
   updateDoc,
   deleteDoc,
+  setDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -45,7 +46,12 @@ export const getAllFireStore = async () => {
     const ip = doc.data().ip.split(".");
     result.board.push({
       id: doc.id,
-      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1], password: '' },
+      data: {
+        ...doc.data(),
+        date: date,
+        ip: ip[0] + "." + ip[1],
+        password: "",
+      },
     });
   });
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -74,7 +80,12 @@ export const getAddAllFireStore = async (start, size) => {
     const ip = doc.data().ip.split(".");
     result.board.push({
       id: doc.id,
-      data: { ...doc.data(), date: date, ip: ip[0] + "." + ip[1], password: '' },
+      data: {
+        ...doc.data(),
+        date: date,
+        ip: ip[0] + "." + ip[1],
+        password: "",
+      },
     });
   });
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1];
@@ -90,14 +101,12 @@ export const getOneFireStore = async (id) => {
     await updateDoc(docRef, {
       view: docSnap.data().view + 1,
     });
-    const date = new Date(+docSnap.data().date).toLocaleString();
     const ip = docSnap.data().ip.split(".");
     return {
       ...docSnap.data(),
-      date: date,
       ip: ip[0] + "." + ip[1],
       view: docSnap.data().view + 1,
-      password: ''
+      password: "",
     };
   }
 };
@@ -107,9 +116,9 @@ export const loginPostFirebase = async (id, password) => {
   const docRef = doc(db, "Board", id);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
-    return docSnap.data().password === password
+    return docSnap.data().password === password;
   }
-}
+};
 
 // 좋아요 누르기
 export const postAddLike = async (id, like) => {
@@ -117,8 +126,8 @@ export const postAddLike = async (id, like) => {
   await updateDoc(docRef, {
     like: like + 1,
   });
-  return like + 1
-}
+  return like + 1;
+};
 
 // 게시글 쓰기
 export const postFireStore = async (data) => {
@@ -126,8 +135,14 @@ export const postFireStore = async (data) => {
   return true;
 };
 
+// 게시글 수정
+export const editFireStore = async (data, id) => {
+  await setDoc(doc(db, "Board", id), data);
+  return true;
+};
+
 // 게시글 삭제
 export const postDelete = async (id) => {
   await deleteDoc(doc(db, "Board", id));
-  return true
-}
+  return true;
+};

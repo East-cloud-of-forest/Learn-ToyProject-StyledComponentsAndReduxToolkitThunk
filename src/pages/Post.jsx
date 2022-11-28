@@ -37,20 +37,17 @@ const Post = () => {
     }, 300);
   };
   // 비밀번호 입력시 검증
-  const status = useSelector((state) => state.post.status);
-  console.log(status);
   const loginFirebasePost = async () => {
     setFailLogin(false);
     const result = await loginPostFirebase(params.id, password);
     if (result) {
+      // 삭제인지 수정인지 판단
       if (loginMode === "delete") {
-        const deletePost = dispatch(asyncDeleteFirebase(params.id));
-        deletePost.then(() => {
+        dispatch(asyncDeleteFirebase(params.id)).then(() => {
           nav("/board");
         });
       } else if (loginMode === "edit") {
-        console.log("edit");
-        // nav("/");
+        nav("/write/" + params.id);
       }
     } else {
       setFailLogin(!result);
@@ -67,7 +64,7 @@ const Post = () => {
         </div>
         <div>
           <p>
-            {post.name} <span>({post.ip})</span> | <span>{post.date}</span>
+            {post.name} <span>({post.ip})</span> | <span>{new Date(+post.date).toLocaleString()}</span>
           </p>
           <p>
             <span>조회수 {post.view}</span>

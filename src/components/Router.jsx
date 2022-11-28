@@ -16,7 +16,10 @@ const Router = () => {
           <Route path="" index element={<PostList />} />
           <Route path=":id" element={<Post />} />
         </Route>
-        <Route path="/write" element={<Wtite />} />
+        <Route path="/write">
+          <Route path="" element={<Wtite />} />
+          <Route path=":id" element={<Wtite />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

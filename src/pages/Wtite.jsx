@@ -80,13 +80,13 @@ const Wtite = () => {
     dataDispatch({ type: type, payload: e.target.value });
   };
 
+  // 모달 관련 state 및 모달 여닫기
   const [modalContent, setModalContent] = useState([]);
   const [modalToggle, setModalToggle] = useState(null);
-
   const closeModal = () => {
     setModalToggle(false);
   };
-
+  // input 빈칸 검사 및 modal data 갱싱, modal 오픈
   const inputEmptyRules = () => {
     const strArray = [data.title, data.text, data.name, data.password];
     const strName = ["글제목", "글내용", "닉네임", "비밀번호"];
@@ -95,7 +95,6 @@ const Wtite = () => {
       return x;
     }, []);
     if (emptyArr.length !== 0) {
-      console.log(1);
       setModalContent(emptyArr);
       setModalToggle(true);
       return true;
@@ -104,16 +103,17 @@ const Wtite = () => {
     }
   };
 
+  // 새글 쓰는 것 또는 수정일시 reducer 결정 부분 및 데이터 보내기
+  const writePostFu = (data) => {
+    if (postId === undefined) {
+      return dispatch(asyncPostFirebase(data));
+    } else {
+      return dispatch(asyncEditFirebase({ data: data, id: postId }));
+    }
+  };
   const sendPost = () => {
+    // 빈칸 검사
     if (inputEmptyRules()) return;
-    // 새글인지 수정인지에 따라 redux 에 따로 요청
-    const writePostFu = (data) => {
-      if (postId === undefined) {
-        return dispatch(asyncPostFirebase(data));
-      } else {
-        return dispatch(asyncEditFirebase({ data: data, id: postId }));
-      }
-    };
     writePostFu({
       ...data,
       date: data.date === null ? new Date().getTime() : data.date,
@@ -191,7 +191,7 @@ const Wtite = () => {
         글 쓰기
       </Button>
       <Modal open={modalToggle} onClick={closeModal} center>
-        <EmptyContent onClick={(e)=>e.stopPropagation()}>
+        <EmptyContent onClick={(e) => e.stopPropagation()}>
           <p>다음 칸을 입력해주세요.</p>
           <ul>
             {modalContent.map((x) => (

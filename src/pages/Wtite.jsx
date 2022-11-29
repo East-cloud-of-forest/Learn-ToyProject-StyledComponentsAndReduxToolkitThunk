@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
@@ -7,59 +7,119 @@ import {
   asyncPostFirebase,
 } from "../app/modules/Firebase/WritePostSlice";
 import Button from "../components/Button";
+import Modal from "../components/Modal";
+
+const initalState = {
+  title: "",
+  text: "",
+  name: "",
+  password: "",
+  head: "심심해서",
+  like: 0,
+  view: 0,
+  date: null,
+};
+
+const reducer = (state, action) => {
+  // 글자수 제한
+  const maxLength = (str, max) => {
+    if (str.length >= max) {
+      str = str.slice(0, max);
+    }
+    return str;
+  };
+  switch (action.type) {
+    // 게시글 수정일시 데이터 받아오기
+    case "edit":
+      return { ...state, ...action.payload };
+    // 각 입력 각 변경
+    case "title":
+      return { ...state, title: maxLength(action.payload, 50) };
+    case "text":
+      return { ...state, text: action.payload };
+    case "name":
+      return { ...state, name: maxLength(action.payload, 8) };
+    case "head":
+      return { ...state, head: action.payload };
+    case "password":
+      return { ...state, password: maxLength(action.payload, 12) };
+    default:
+      return state;
+  }
+};
 
 const Wtite = () => {
   const params = useParams();
   const postId = params.id;
   const post = useSelector((state) => state.post.data);
-  const writePostFu = (data) => {
-    if (postId === undefined) {
-      return dispatch(asyncPostFirebase(data));
-    } else {
-      return dispatch(asyncEditFirebase({ data: data, id: postId }));
-    }
-  };
-  useEffect(() => {
-    if (postId === undefined) return;
-    setTitle(post.title);
-    setText(post.text);
-    setId(post.name);
-    setHead(post.head);
-    setLike(post.like);
-    setView(post.view);
-    setDate(post.date);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [head, setHead] = useState("심심해서");
-  const [like, setLike] = useState(0);
-  const [view, setView] = useState(0);
-  const [date, setDate] = useState(null);
   const nav = useNavigate();
   const dispatch = useDispatch();
   const ip = useSelector((state) => state.ip.value);
+  const [data, dataDispatch] = useReducer(reducer, initalState);
 
-  const changeValue = (set, e) => {
-    set(e.target.value);
+  // 수정 시 초기값 가져오기
+  useEffect(() => {
+    if (postId === undefined) return;
+    dataDispatch({
+      type: "edit",
+      payload: {
+        title: post.title,
+        text: post.text.replaceAll("<br />", "\n"),
+        name: post.name,
+        head: post.head,
+        like: post.like,
+        view: post.view,
+        date: post.date,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 각 텍스트 수정 시 reducer 에 dispatch
+  const changeValue = (type, e) => {
+    dataDispatch({ type: type, payload: e.target.value });
+  };
+
+  const [modalContent, setModalContent] = useState([]);
+  const [modalToggle, setModalToggle] = useState(null);
+
+  const closeModal = () => {
+    setModalToggle(false);
+  };
+
+  const inputEmptyRules = () => {
+    const strArray = [data.title, data.text, data.name, data.password];
+    const strName = ["글제목", "글내용", "닉네임", "비밀번호"];
+    const emptyArr = strArray.reduce((x, y, i) => {
+      if (y === "") x.push(strName[i]);
+      return x;
+    }, []);
+    if (emptyArr.length !== 0) {
+      console.log(1);
+      setModalContent(emptyArr);
+      setModalToggle(true);
+      return true;
+    } else {
+      return false;
+    }
   };
 
   const sendPost = () => {
-    const data = {
-      date: date === null ? new Date().getTime() : date,
-      head: head,
-      ip: ip,
-      like: like,
-      name: id,
-      password: password,
-      text: text,
-      title: title,
-      view: view,
+    if (inputEmptyRules()) return;
+    // 새글인지 수정인지에 따라 redux 에 따로 요청
+    const writePostFu = (data) => {
+      if (postId === undefined) {
+        return dispatch(asyncPostFirebase(data));
+      } else {
+        return dispatch(asyncEditFirebase({ data: data, id: postId }));
+      }
     };
-    writePostFu(data).then(() => {
+    writePostFu({
+      ...data,
+      date: data.date === null ? new Date().getTime() : data.date,
+      text: data.text.replaceAll("\n", "<br />"),
+      ip: ip,
+    }).then(() => {
       nav("/board/");
     });
   };
@@ -69,9 +129,9 @@ const Wtite = () => {
       <h1>글 쓰기</h1>
       <div>
         <select
-          value={head}
+          value={data.head}
           onChange={(e) => {
-            changeValue(setHead, e);
+            changeValue("head", e);
           }}
         >
           <option value="심심해서">심심해서</option>
@@ -82,35 +142,37 @@ const Wtite = () => {
           type="text"
           placeholder="닉네임"
           onChange={(e) => {
-            changeValue(setId, e);
+            changeValue("name", e);
           }}
-          value={id}
+          value={data.name}
+          maxLength="8"
         />
         <input
           type="password"
           placeholder="비밀번호"
           autoComplete="on"
           onChange={(e) => {
-            changeValue(setPassword, e);
+            changeValue("password", e);
           }}
-          value={password}
+          maxLength="12"
+          value={data.password}
         />
       </div>
       <input
         type="text"
         placeholder="글 제목"
         onChange={(e) => {
-          changeValue(setTitle, e);
+          changeValue("title", e);
         }}
-        value={title}
+        value={data.title}
       />
       <textarea
         rows="10"
         placeholder="글 내용"
         onChange={(e) => {
-          changeValue(setText, e);
+          changeValue("text", e);
         }}
-        value={text}
+        value={data.text}
       ></textarea>
       <Button
         onClick={(e) => {
@@ -128,6 +190,24 @@ const Wtite = () => {
       >
         글 쓰기
       </Button>
+      <Modal open={modalToggle} onClick={closeModal} center>
+        <EmptyContent onClick={(e)=>e.stopPropagation()}>
+          <p>다음 칸을 입력해주세요.</p>
+          <ul>
+            {modalContent.map((x) => (
+              <li key={x}>{x}</li>
+            ))}
+          </ul>
+          <Button
+            onClick={(e) => {
+              e.preventDefault();
+              closeModal();
+            }}
+          >
+            확인
+          </Button>
+        </EmptyContent>
+      </Modal>
     </StWtite>
   );
 };
@@ -138,7 +218,7 @@ const StWtite = styled.form`
   margin-top: 7rem;
   text-align: center;
 
-  h1 {
+  > h1 {
     text-align: center;
     margin-bottom: 5rem;
   }
@@ -150,12 +230,12 @@ const StWtite = styled.form`
     color: ${({ theme }) => theme.color};
   }
 
-  div {
+  > div {
     display: flex;
     margin-bottom: 2rem;
 
-    select,
-    option {
+    > select,
+    > option {
       background-color: ${({ theme }) => theme.backgroundColor};
       color: ${({ theme }) => theme.color};
       margin-right: 2rem;
@@ -164,7 +244,7 @@ const StWtite = styled.form`
       outline: none;
     }
 
-    input {
+    > input {
       display: block;
       margin-right: 2rem;
     }
@@ -176,7 +256,7 @@ const StWtite = styled.form`
     margin-bottom: 2rem;
   }
 
-  textarea {
+  > textarea {
     background-color: inherit;
     color: ${({ theme }) => theme.color};
     width: 100%;
@@ -184,8 +264,23 @@ const StWtite = styled.form`
     margin-bottom: 2rem;
   }
 
-  button {
+  > button {
     margin: 0 1rem;
+  }
+`;
+
+const EmptyContent = styled.div`
+  background-color: ${({ theme }) => theme.backgroundColor};
+  border: 1px solid;
+  border-radius: 7px;
+  cursor: default;
+  padding: 0.5rem 3rem;
+  p {
+    margin: 0.5rem;
+  }
+  li {
+    font-size: 0.8rem;
+    opacity: 0.5;
   }
 `;
 

@@ -64,7 +64,8 @@ const Post = () => {
         </div>
         <div>
           <p>
-            {post.name} <span>({post.ip})</span> | <span>{new Date(+post.date).toLocaleString()}</span>
+            {post.name} <span>({post.ip})</span> |{" "}
+            <span>{new Date(+post.date).toLocaleString()}</span>
           </p>
           <p>
             <span>조회수 {post.view}</span>
@@ -75,7 +76,7 @@ const Post = () => {
       </PostHeader>
       <hr />
       <PostBody>
-        {post.text}
+        <p dangerouslySetInnerHTML={{ __html: post.text }}></p>
         <br></br>
         <Button
           size="1.2rem"
@@ -231,14 +232,14 @@ const Login = styled.form`
   justify-content: space-around;
   align-items: center;
 
-  input {
+  > input {
     background-color: inherit;
     border-width: 0 0 1px 0;
     outline: none;
     color: ${({ theme }) => theme.color};
     text-align: center;
   }
-  div {
+  > div {
     display: flex;
     justify-content: space-around;
     width: 100%;

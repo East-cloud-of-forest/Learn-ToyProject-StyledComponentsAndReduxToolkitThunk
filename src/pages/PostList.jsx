@@ -60,9 +60,7 @@ const PostList = () => {
               </td>
               <td>
                 <div>
-                  <div>
-                    <div>{x.data.name}</div>
-                  </div>
+                  <div>{x.data.name}</div>
                   <span>({x.data.ip})</span>
                 </div>
               </td>
@@ -141,14 +139,7 @@ const StPostList = styled.div`
           display: flex;
           flex-direction: row;
           > div {
-            flex: 1;
-            width: 1px;
-            div {
-              text-overflow: ellipsis;
-              overflow: hidden;
-              white-space: nowrap;
-              word-break: break-all;
-            }
+            width: 128px;
           }
           span {
             font-size: 0.8rem;

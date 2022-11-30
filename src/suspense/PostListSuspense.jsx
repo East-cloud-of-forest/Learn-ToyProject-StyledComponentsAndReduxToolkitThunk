@@ -1,9 +1,10 @@
 import { Suspense, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { asyncGetAllFirebase } from "../app/modules/Firebase/GetBoardDataSlice";
-import PostListComponent from "../components/PostListComponent";
+import PoseListLoading from "../components/PoseListLoading";
+import PostList from "../components/PostList";
 
-const PostList = () => {
+const PostListSuspense = () => {
   const dispatch = useDispatch();
   const board = useSelector((state) => state.board);
   const status = useSelector((state) => state.board.status);
@@ -21,11 +22,11 @@ const PostList = () => {
 
   return (
     <div>
-      <Suspense fallback={<p>로딩중</p>}>
-        <PostListComponent board={getBoard} />
+      <Suspense fallback={<PoseListLoading />}>
+        <PostList board={getBoard} />
       </Suspense>
     </div>
   );
 };
 
-export default PostList;
+export default PostListSuspense;

@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { asyncGetAddAllFirebase } from "../app/modules/Firebase/GetBoardDataSlice";
-import Button from "../components/Button";
+import Button from "./Button";
 
 const PostListComponent = ({ board }) => {
   board = board()

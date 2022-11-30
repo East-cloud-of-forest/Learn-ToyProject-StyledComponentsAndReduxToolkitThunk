@@ -1,24 +1,19 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { loginPostFirebase } from "../app/api/Firebase";
 import {
   asyncDeleteFirebase,
-  asyncGetOneFirebase,
   asyncPostAddLikeFirebase,
 } from "../app/modules/Firebase/GetPostDataSlice";
-import Button from "../components/Button";
-import Modal from "../components/Modal";
+import Button from "./Button";
+import Modal from "./Modal";
 
-const Post = () => {
-  const params = useParams();
+const Post = ({ getPost, params }) => {
   const dispatch = useDispatch();
   const nav = useNavigate();
-  const post = useSelector((state) => state.post.data);
-  useEffect(() => {
-    dispatch(asyncGetOneFirebase(params.id));
-  }, [dispatch, params.id]);
+  const post = getPost();
   const addLike = () => {
     dispatch(asyncPostAddLikeFirebase({ id: params.id, like: post.like }));
   };

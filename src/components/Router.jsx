@@ -1,10 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Board from "../pages/Board";
 import Main from "../pages/Main";
-import Post from "../pages/Post";
 import Header from "./Header";
-import PostList from "../pages/PostList";
 import Wtite from "../pages/Wtite";
+import PostListSuspense from "../suspense/PostListSuspense";
+import PostSuspense from "../suspense/PostSuspense";
 
 const Router = () => {
   return (
@@ -13,8 +13,8 @@ const Router = () => {
       <Routes>
         <Route path="/" index element={<Main />} />
         <Route path="/board" element={<Board />}>
-          <Route path="" index element={<PostList />} />
-          <Route path=":id" element={<Post />} />
+          <Route path="" index element={<PostListSuspense />} />
+          <Route path=":id" element={<PostSuspense />} />
         </Route>
         <Route path="/write">
           <Route path="" element={<Wtite />} />

@@ -8,7 +8,7 @@ import PostSuspense from "../suspense/PostSuspense";
 
 const Router = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Header />
       <Routes>
         <Route path="/" index element={<Main />} />

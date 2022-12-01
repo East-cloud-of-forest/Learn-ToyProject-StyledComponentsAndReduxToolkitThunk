@@ -75,7 +75,7 @@ const Wtite = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 각 텍스트 수정 시 reducer 에 dispatch
+  // 각 텍스트 입력시 reducer 에 dispatch
   const changeValue = (type, e) => {
     dataDispatch({ type: type, payload: e.target.value });
   };
@@ -86,7 +86,7 @@ const Wtite = () => {
   const closeModal = () => {
     setModalToggle(false);
   };
-  // input 빈칸 검사 및 modal data 갱싱, modal 오픈
+  // input 빈칸 검사 및 modal data 갱신, modal 오픈
   const inputEmptyRules = () => {
     const strArray = [data.title, data.text, data.name, data.password];
     const strName = ["글제목", "글내용", "닉네임", "비밀번호"];
@@ -104,7 +104,7 @@ const Wtite = () => {
   };
 
   // 새글 쓰는 것 또는 수정일시 reducer 결정 부분 및 데이터 보내기
-  const writePostFu = (data) => {
+  const decisionDispatch = (data) => {
     if (postId === undefined) {
       return dispatch(asyncPostFirebase(data));
     } else {
@@ -114,7 +114,7 @@ const Wtite = () => {
   const sendPost = () => {
     // 빈칸 검사
     if (inputEmptyRules()) return;
-    writePostFu({
+    decisionDispatch({
       ...data,
       date: data.date === null ? new Date().getTime() : data.date,
       text: data.text.replaceAll("\n", "<br />"),

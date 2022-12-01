@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/learn_styledcomponents_reacttoolkitume/static/css/main.e6c13ad2.css",
-    "main.js": "/learn_styledcomponents_reacttoolkitume/static/js/main.b91f8579.js",
-    "static/js/787.81cb5b43.chunk.js": "/learn_styledcomponents_reacttoolkitume/static/js/787.81cb5b43.chunk.js",
-    "index.html": "/learn_styledcomponents_reacttoolkitume/index.html",
-    "main.e6c13ad2.css.map": "/learn_styledcomponents_reacttoolkitume/static/css/main.e6c13ad2.css.map",
-    "main.b91f8579.js.map": "/learn_styledcomponents_reacttoolkitume/static/js/main.b91f8579.js.map",
-    "787.81cb5b43.chunk.js.map": "/learn_styledcomponents_reacttoolkitume/static/js/787.81cb5b43.chunk.js.map"
+    "main.css": "/learn_styledcomponents_reacttoolkit/static/css/main.e6c13ad2.css",
+    "main.js": "/learn_styledcomponents_reacttoolkit/static/js/main.232a5f5d.js",
+    "static/js/787.81cb5b43.chunk.js": "/learn_styledcomponents_reacttoolkit/static/js/787.81cb5b43.chunk.js",
+    "index.html": "/learn_styledcomponents_reacttoolkit/index.html",
+    "main.e6c13ad2.css.map": "/learn_styledcomponents_reacttoolkit/static/css/main.e6c13ad2.css.map",
+    "main.232a5f5d.js.map": "/learn_styledcomponents_reacttoolkit/static/js/main.232a5f5d.js.map",
+    "787.81cb5b43.chunk.js.map": "/learn_styledcomponents_reacttoolkit/static/js/787.81cb5b43.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.b91f8579.js"
+    "static/js/main.232a5f5d.js"
   ]
 }

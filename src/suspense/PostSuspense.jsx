@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useEffect } from "react";
 import { Suspense, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -8,13 +10,23 @@ import PostLoading from "../components/PostLoading";
 const PostSuspense = () => {
   const params = useParams();
   const dispatch = useDispatch();
-  const post = useSelector((state) => state.post.data);
-  const status = useSelector((state) => state.post.status);
-  console.log(status);
+  const { post, status } = useSelector((state) => ({
+    post: state.post.data,
+    status: state.post.status,
+  }));
+
+  const [forSuspenseSetDispatch, setForSuspenseSetDispatch] = useState(
+    new Promise((res) => {
+      res(Error);
+    })
+  );
+  useEffect(() => {
+    setForSuspenseSetDispatch(dispatch(asyncGetOneFirebase(params.id)));
+  }, [dispatch, params]);
 
   const promise = useMemo(() => {
-    return dispatch(asyncGetOneFirebase(params.id));
-  }, [dispatch, params]);
+    return forSuspenseSetDispatch;
+  }, [forSuspenseSetDispatch]);
 
   const getPost = useCallback(() => {
     if (status === "loading") {

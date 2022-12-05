@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useMemo } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { asyncGetAllFirebase } from "../app/modules/Firebase/GetBoardDataSlice";
 import PoseListLoading from "../components/PoseListLoading";
@@ -6,12 +6,22 @@ import PostList from "../components/PostList";
 
 const PostListSuspense = () => {
   const dispatch = useDispatch();
-  const board = useSelector((state) => state.board);
-  const status = useSelector((state) => state.board.status);
+  const { board, status } = useSelector((state) => ({
+    board: state.board,
+    status: state.board.status,
+  }));
+  const [forSuspenseSetDispatch, setForSuspenseSetDispatch] = useState(
+    new Promise((res) => {
+      res(Error);
+    })
+  );
+  useEffect(() => {
+    setForSuspenseSetDispatch(dispatch(asyncGetAllFirebase()));
+  }, [dispatch]);
 
   const promise = useMemo(() => {
-    return dispatch(asyncGetAllFirebase());
-  }, [dispatch]);
+    return forSuspenseSetDispatch;
+  }, [forSuspenseSetDispatch]);
 
   const getBoard = useCallback(() => {
     if (status === "loading") {

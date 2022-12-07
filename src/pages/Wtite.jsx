@@ -51,16 +51,23 @@ const reducer = (state, action) => {
 const Wtite = () => {
   const params = useParams();
   const postId = params.id;
-  const post = useSelector((state) => state.post.data);
+  const { post, ip } = useSelector((state) => ({
+    post: state.post.data,
+    ip: state.ip.value,
+  }));
   const nav = useNavigate();
   const dispatch = useDispatch();
-  const ip = useSelector((state) => state.ip.value);
-  const [data, dataDispatch] = useReducer(reducer, initalState);
+  const [data, dataReducer] = useReducer(reducer, initalState);
 
   // 수정 시 초기값 가져오기
   useEffect(() => {
-    if (postId === undefined) return;
-    dataDispatch({
+    if (!postId) {
+      return;
+    } else if (!post.date) {
+      nav("/");
+      return;
+    }
+    dataReducer({
       type: "edit",
       payload: {
         title: post.title,
@@ -77,7 +84,7 @@ const Wtite = () => {
 
   // 각 텍스트 입력시 reducer 에 dispatch
   const changeValue = (type, e) => {
-    dataDispatch({ type: type, payload: e.target.value });
+    dataReducer({ type: type, payload: e.target.value });
   };
 
   // 모달 관련 state 및 모달 여닫기

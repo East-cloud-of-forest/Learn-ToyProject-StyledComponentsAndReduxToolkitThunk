@@ -9,6 +9,7 @@ import {
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import useBeforeunload from '../hooks/useBeforeunload'
+import usePrompt from '../hooks/usePrompt'
 
 const initalState = {
   title: '',
@@ -59,15 +60,16 @@ const Wtite = () => {
   const nav = useNavigate()
   const dispatch = useDispatch()
   const [data, dataReducer] = useReducer(reducer, initalState)
-  const { enableBeforeunload, disableBeforeunload } = useBeforeunload()
-  
+  // const { enableBeforeunload, disableBeforeunload } = useBeforeunload()
+  const p = usePrompt()
+
   // 페이지 벗어날시 경고창, router 이동시 미작동
-  useEffect(() => {
-    enableBeforeunload()
-    return () => {
-      disableBeforeunload()
-    }
-  }, [enableBeforeunload, disableBeforeunload])
+  // useEffect(() => {
+  //   enableBeforeunload()
+  //   return () => {
+  //     disableBeforeunload()
+  //   }
+  // }, [enableBeforeunload, disableBeforeunload])
 
   // 수정 시 초기값 가져오기
   useEffect(() => {
@@ -131,7 +133,6 @@ const Wtite = () => {
   const sendPost = () => {
     // 빈칸 검사
     if (inputEmptyRules()) return
-    disableBeforeunload()
     decisionDispatch({
       ...data,
       date: data.date === null ? new Date().getTime() : data.date,
@@ -144,22 +145,6 @@ const Wtite = () => {
 
   return (
     <StWtite>
-      <button
-        onClick={(e) => {
-          e.preventDefault()
-          enableBeforeunload()
-        }}
-      >
-        qweqweqw
-      </button>
-      <button
-        onClick={(e) => {
-          e.preventDefault()
-          disableBeforeunload()
-        }}
-      >
-        asdas
-      </button>
       <h1>글 쓰기</h1>
       <div>
         <select

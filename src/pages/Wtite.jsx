@@ -9,7 +9,6 @@ import {
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import useBeforeunload from '../hooks/useBeforeunload'
-import usePrompt from '../hooks/usePrompt'
 
 const initalState = {
   title: '',
@@ -60,16 +59,14 @@ const Wtite = () => {
   const nav = useNavigate()
   const dispatch = useDispatch()
   const [data, dataReducer] = useReducer(reducer, initalState)
-  // const { enableBeforeunload, disableBeforeunload } = useBeforeunload()
-  const p = usePrompt()
 
-  // 페이지 벗어날시 경고창, router 이동시 미작동
-  // useEffect(() => {
-  //   enableBeforeunload()
-  //   return () => {
-  //     disableBeforeunload()
-  //   }
-  // }, [enableBeforeunload, disableBeforeunload])
+  const [canMoveRouter, setCanMoveRouter] = useState(true)
+  useBeforeunload(canMoveRouter)
+  useEffect(() => {
+    if (!canMoveRouter) {
+      nav('/board/')
+    }
+  }, [canMoveRouter, nav])
 
   // 수정 시 초기값 가져오기
   useEffect(() => {
@@ -139,7 +136,7 @@ const Wtite = () => {
       text: data.text.replaceAll('\n', '<br />'),
       ip: ip,
     }).then(() => {
-      nav('/board/')
+      setCanMoveRouter(false)
     })
   }
 

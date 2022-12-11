@@ -3,7 +3,6 @@ import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom'
 
 function useBlocker(blocker, when = true) {
   const { navigator } = useContext(NavigationContext)
-  console.log(navigator)
   useEffect(() => {
     if (!when) return
     const unblock = navigator.block((tx) => {

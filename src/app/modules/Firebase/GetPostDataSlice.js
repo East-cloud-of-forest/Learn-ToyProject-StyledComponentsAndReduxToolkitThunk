@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import {
+  commentDelete,
   getOneFireStore,
   postAddLike,
   postCommentFireStore,
@@ -31,9 +32,17 @@ export const asyncDeleteFirebase = createAsyncThunk(
 )
 
 export const asyncPostCommentFirebase = createAsyncThunk(
-  'WriteCommentSlice/asyncPostCommentFirebase',
+  'GetPostDataSlice/asyncPostCommentFirebase',
   async ({ data, id }) => {
     const resp = await postCommentFireStore(data, id)
+    return resp
+  },
+)
+
+export const asyncDeleteCommentFirebase = createAsyncThunk(
+  'GetPostDataSlice/asyncDeleteCommentFirebase',
+  async ({ id, commentId, password }) => {
+    const resp = await commentDelete(id, commentId, password)
     return resp
   },
 )
@@ -91,6 +100,18 @@ const GetPostDataSlice = createSlice({
       })
       .addCase(asyncPostCommentFirebase.rejected, (state) => {
         state.status = 'fail'
+      })
+
+      // 덧글 삭제
+      .addCase(asyncDeleteCommentFirebase.pending, (state) => {
+        state.status = 'commentloading'
+      })
+      .addCase(asyncDeleteCommentFirebase.fulfilled, (state, actions) => {
+        state.data.comments = actions.payload
+        state.status = 'done'
+      })
+      .addCase(asyncDeleteCommentFirebase.rejected, (state) => {
+        state.status = 'commentDelteFail'
       })
   },
 })

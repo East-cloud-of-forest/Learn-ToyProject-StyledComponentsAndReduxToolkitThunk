@@ -1,10 +1,14 @@
 import { useState } from 'react'
+import { useEffect } from 'react'
 import { useReducer } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
-import { asyncPostCommentFirebase } from '../app/modules/Firebase/GetPostDataSlice'
-import MaxLength from '../hooks/MaxLength'
+import {
+  asyncDeleteCommentFirebase,
+  asyncPostCommentFirebase,
+} from '../app/modules/Firebase/GetPostDataSlice'
+import useMaxLength from '../hooks/useMaxLength'
 import Button from './Button'
 import Modal from './Modal'
 
@@ -17,9 +21,9 @@ const initalState = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'name':
-      return { ...state, name: MaxLength(action.payload, 8) }
+      return { ...state, name: action.payload }
     case 'password':
-      return { ...state, password: MaxLength(action.payload, 12) }
+      return { ...state, password: action.payload }
     case 'text':
       return { ...state, text: action.payload }
     case 'reset':
@@ -31,13 +35,15 @@ const reducer = (state, action) => {
 
 export default function CommentComp({ comments = [] }) {
   const [writeComment, writeCommentReducer] = useReducer(reducer, initalState)
-  const changeValue = (type, e) => {
-    writeCommentReducer({ type: type, payload: e.target.value })
+  const changeValue = (type, str) => {
+    writeCommentReducer({ type: type, payload: str })
   }
-  const { ip } = useSelector((state) => ({
+  const { ip, stauts } = useSelector((state) => ({
+    stauts: state.post.status,
     ip: state.ip.value,
   }))
   const dispatch = useDispatch()
+  const [maxLength] = useMaxLength()
   const params = useParams()
   const id = params.id
 
@@ -91,9 +97,28 @@ export default function CommentComp({ comments = [] }) {
     })
   }
 
-  const deletComment = (id) => {
-    console.log(id)
+  const [deleteModalToggle, setDeleteModalToggle] = useState(null)
+  const [deletePassword, setDeletePassword] = useState('')
+  const closeDeletePassword = () => {
+    setDeleteModalToggle(null)
+    setDeletePassword('')
   }
+  const deletComment = (commentId) => {
+    if (deletePassword === '') {
+      alert('비밀번호를 입력해주세요.')
+      return
+    }
+    dispatch(
+      asyncDeleteCommentFirebase({ id, commentId, password: deletePassword }),
+    )
+  }
+  useEffect(() => {
+    if (stauts === 'commentDelteFail') {
+      alert('비밀번호가 맞지 않습니다.')
+    } else if (stauts === 'done') {
+      closeDeletePassword()
+    }
+  }, [stauts])
 
   return (
     <StComment>
@@ -123,7 +148,31 @@ export default function CommentComp({ comments = [] }) {
                       second: '2-digit',
                     })}
                   </span>
-                  <Button onClick={() => deletComment(comment.id)}>❌</Button>
+                  <div>
+                    <Button onClick={() => setDeleteModalToggle(comment.id)}>
+                      ❌
+                    </Button>
+                    {deleteModalToggle === comment.id && (
+                      <DeleteModal>
+                        <input
+                          type="password"
+                          placeholder="비밀번호"
+                          value={deletePassword}
+                          onChange={(e) => {
+                            setDeletePassword(maxLength(e.target.value, 12))
+                          }}
+                        />
+                        <Button
+                          onClick={() => {
+                            deletComment(comment.id)
+                          }}
+                        >
+                          확인
+                        </Button>
+                        <Button onClick={() => closeDeletePassword()}>✖</Button>
+                      </DeleteModal>
+                    )}
+                  </div>
                 </div>
               </Comment>
             ))}
@@ -137,13 +186,15 @@ export default function CommentComp({ comments = [] }) {
             type="text"
             placeholder="닉네임"
             value={writeComment.name}
-            onChange={(e) => changeValue('name', e)}
+            onChange={(e) => changeValue('name', maxLength(e.target.value, 8))}
           />
           <input
             type="password"
             placeholder="비밀번호"
             value={writeComment.password}
-            onChange={(e) => changeValue('password', e)}
+            onChange={(e) =>
+              changeValue('password', maxLength(e.target.value, 12))
+            }
           />
         </div>
         <textarea
@@ -152,7 +203,7 @@ export default function CommentComp({ comments = [] }) {
           cols="30"
           rows="3"
           value={writeComment.text}
-          onChange={(e) => changeValue('text', e)}
+          onChange={(e) => changeValue('text', e.target.value)}
         ></textarea>
         <Button
           onClick={(e) => {
@@ -205,7 +256,7 @@ const Comment = styled.li`
     opacity: 0.5;
   }
 
-  div {
+  > div {
     display: flex;
     align-items: center;
 
@@ -219,6 +270,9 @@ const Comment = styled.li`
       flex: 8;
       margin: 0 1rem;
       text-align: left;
+    }
+    &:nth-child(3) {
+      position: relative;
     }
   }
 
@@ -270,5 +324,34 @@ const EmptyContent = styled.div`
   li {
     font-size: 0.8rem;
     opacity: 0.5;
+  }
+`
+
+const DeleteModal = styled.div`
+  position: absolute;
+  background-color: ${({ theme }) => theme.backgroundColor};
+  top: 100%;
+  right: 20%;
+  box-shadow: 0px 0px 5px ${({ theme }) => theme.shadowColor};
+  box-sizing: border-box;
+  z-index: 2;
+  padding: 0.5rem 1rem;
+  display: flex;
+
+  input {
+    background-color: inherit;
+    border-width: 0 0 1px 0;
+    outline: none;
+    color: ${({ theme }) => theme.color};
+    flex: 1;
+  }
+
+  button:nth-child(2) {
+    flex: 1;
+    width: 50px;
+    margin: 0 0.5rem;
+  }
+  button:nth-child(3) {
+    width: 40px;
   }
 `

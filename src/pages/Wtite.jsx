@@ -9,7 +9,7 @@ import {
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import useBeforeunload from '../hooks/useBeforeunload'
-import MaxLength from '../hooks/MaxLength'
+import useMaxLength from '../hooks/useMaxLength'
 
 const initalState = {
   title: '',
@@ -30,15 +30,15 @@ const reducer = (state, action) => {
       return { ...state, ...action.payload }
     // 각 입력 각 변경
     case 'title':
-      return { ...state, title: MaxLength(action.payload, 50) }
+      return { ...state, title: action.payload }
     case 'text':
       return { ...state, text: action.payload }
     case 'name':
-      return { ...state, name: MaxLength(action.payload, 8) }
+      return { ...state, name: action.payload }
     case 'head':
       return { ...state, head: action.payload }
     case 'password':
-      return { ...state, password: MaxLength(action.payload, 12) }
+      return { ...state, password: action.payload }
     default:
       return state
   }
@@ -54,6 +54,7 @@ const Wtite = () => {
   const nav = useNavigate()
   const dispatch = useDispatch()
   const [data, dataReducer] = useReducer(reducer, initalState)
+  const [maxLength] = useMaxLength()
 
   const [canMoveRouter, setCanMoveRouter] = useState(true)
   useBeforeunload(canMoveRouter)
@@ -87,8 +88,8 @@ const Wtite = () => {
   }, [])
 
   // 각 텍스트 입력시 reducer 에 dispatch
-  const changeValue = (type, e) => {
-    dataReducer({ type: type, payload: e.target.value })
+  const changeValue = (type, str) => {
+    dataReducer({ type: type, payload: str })
   }
 
   // 모달 관련 state 및 모달 여닫기
@@ -142,7 +143,7 @@ const Wtite = () => {
         <select
           value={data.head}
           onChange={(e) => {
-            changeValue('head', e)
+            changeValue('head', e.target.value)
           }}
         >
           <option value="심심해서">심심해서</option>
@@ -153,7 +154,7 @@ const Wtite = () => {
           type="text"
           placeholder="닉네임"
           onChange={(e) => {
-            changeValue('name', e)
+            changeValue('name', maxLength(e.target.value, 8))
           }}
           value={data.name}
           maxLength="8"
@@ -163,7 +164,7 @@ const Wtite = () => {
           placeholder="비밀번호"
           autoComplete="on"
           onChange={(e) => {
-            changeValue('password', e)
+            changeValue('password', maxLength(e.target.value, 12))
           }}
           maxLength="12"
           value={data.password}
@@ -173,7 +174,7 @@ const Wtite = () => {
         type="text"
         placeholder="글 제목"
         onChange={(e) => {
-          changeValue('title', e)
+          changeValue('title', maxLength(e.target.value, 50))
         }}
         value={data.title}
       />
@@ -181,7 +182,7 @@ const Wtite = () => {
         rows="10"
         placeholder="글 내용"
         onChange={(e) => {
-          changeValue('text', e)
+          changeValue('text', e.target.value)
         }}
         value={data.text}
       ></textarea>

@@ -7,7 +7,7 @@ import {
   asyncDeleteFirebase,
   asyncPostAddLikeFirebase,
 } from '../app/modules/Firebase/GetPostDataSlice'
-import MaxLength from '../hooks/MaxLength'
+import useMaxLength from '../hooks/useMaxLength'
 import Button from './Button'
 import CommentComp from './CommentComp'
 import Modal from './Modal'
@@ -25,6 +25,7 @@ const Post = ({ getPost, params }) => {
   const [modalOpen, setModalOpen] = useState(null)
   const [failLogin, setFailLogin] = useState(false)
   const [loginMode, setLoginMode] = useState(null)
+  const [maxLength] = useMaxLength()
   const closeLogin = () => {
     setModalOpen(!modalOpen)
     setTimeout(() => {
@@ -123,7 +124,7 @@ const Post = ({ getPost, params }) => {
             placeholder="비밀번호"
             value={password}
             onChange={(e) => {
-              setPassword(MaxLength(e.target.value, 12))
+              setPassword(maxLength(e.target.value, 12))
             }}
           />
           <div>

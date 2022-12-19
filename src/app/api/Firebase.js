@@ -153,16 +153,34 @@ export const editFireStore = async (data, id) => {
 
 // 게시글 삭제
 export const postDelete = async (id) => {
+  const commentsSnap = await getDocs(collection(db, 'Board', id + '/comment'))
+  commentsSnap.forEach((comment) => {
+    deleteDoc(doc(db, `Board/${id}/comment`, comment.id))
+  })
   await deleteDoc(doc(db, 'Board', id))
   return true
 }
 
 // 덧글 쓰기
 export const postCommentFireStore = async (data, id) => {
-  console.log(data, id)
   await addDoc(collection(db, 'Board', id + '/comment'), data)
   const comments = await getCommentFireStore(id)
   return comments
+}
+
+// 덧글 삭제
+export const commentDelete = async (id, commentId, password) => {
+  const docRef = doc(db, `Board/${id}/comment`, commentId)
+  const docSnap = await getDoc(docRef)
+  if (docSnap.exists()) {
+    if (docSnap.data().password === password) {
+      await deleteDoc(docRef)
+      const comments = await getCommentFireStore(id)
+      return comments
+    } else {
+      throw new Error()
+    }
+  }
 }
 
 // 덧글 읽기

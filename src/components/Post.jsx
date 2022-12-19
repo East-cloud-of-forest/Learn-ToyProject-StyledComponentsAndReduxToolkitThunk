@@ -1,53 +1,54 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { loginPostFirebase } from "../app/api/Firebase";
+import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
+import { loginPostFirebase } from '../app/api/Firebase'
 import {
   asyncDeleteFirebase,
   asyncPostAddLikeFirebase,
-} from "../app/modules/Firebase/GetPostDataSlice";
-import Button from "./Button";
-import Modal from "./Modal";
+} from '../app/modules/Firebase/GetPostDataSlice'
+import Button from './Button'
+import Comment from './Comment'
+import Modal from './Modal'
 
 const Post = ({ getPost, params }) => {
-  const dispatch = useDispatch();
-  const nav = useNavigate();
-  const post = getPost();
+  const dispatch = useDispatch()
+  const nav = useNavigate()
+  const post = getPost()
   const addLike = () => {
-    dispatch(asyncPostAddLikeFirebase({ id: params.id, like: post.like }));
-  };
+    dispatch(asyncPostAddLikeFirebase({ id: params.id, like: post.like }))
+  }
 
   // 수정 삭제 시 비밀번호 입력 모달 여닫기
-  const [password, setPassword] = useState("");
-  const [modalOpen, setModalOpen] = useState(null);
-  const [failLogin, setFailLogin] = useState(false);
-  const [loginMode, setLoginMode] = useState(null);
+  const [password, setPassword] = useState('')
+  const [modalOpen, setModalOpen] = useState(null)
+  const [failLogin, setFailLogin] = useState(false)
+  const [loginMode, setLoginMode] = useState(null)
   const closeLogin = () => {
-    setModalOpen(!modalOpen);
+    setModalOpen(!modalOpen)
     setTimeout(() => {
-      setPassword("");
-      setFailLogin(false);
-      setLoginMode(null);
-    }, 300);
-  };
+      setPassword('')
+      setFailLogin(false)
+      setLoginMode(null)
+    }, 300)
+  }
   // 비밀번호 입력시 검증
   const loginFirebasePost = async () => {
-    setFailLogin(false);
-    const result = await loginPostFirebase(params.id, password);
+    setFailLogin(false)
+    const result = await loginPostFirebase(params.id, password)
     if (result) {
       // 삭제인지 수정인지 판단
-      if (loginMode === "delete") {
+      if (loginMode === 'delete') {
         dispatch(asyncDeleteFirebase(params.id)).then(() => {
-          nav("/board");
-        });
-      } else if (loginMode === "edit") {
-        nav("/write/" + params.id);
+          nav('/board')
+        })
+      } else if (loginMode === 'edit') {
+        nav('/write/' + params.id)
       }
     } else {
-      setFailLogin(!result);
+      setFailLogin(!result)
     }
-  };
+  }
 
   return (
     <StPost>
@@ -59,7 +60,7 @@ const Post = ({ getPost, params }) => {
         </div>
         <div>
           <p>
-            {post.name} <span>({post.ip})</span> |{" "}
+            {post.name} <span>({post.ip})</span> |{' '}
             <span>{new Date(+post.date).toLocaleString()}</span>
           </p>
           <p>
@@ -76,7 +77,7 @@ const Post = ({ getPost, params }) => {
         <Button
           size="1.2rem"
           onClick={() => {
-            addLike();
+            addLike()
           }}
         >
           좋아요 👍
@@ -85,32 +86,34 @@ const Post = ({ getPost, params }) => {
       <PostFooter>
         <Button
           onClick={() => {
-            setModalOpen(!modalOpen);
-            setLoginMode("edit");
+            setModalOpen(!modalOpen)
+            setLoginMode('edit')
           }}
         >
           수정
         </Button>
         <Button
           onClick={() => {
-            setModalOpen(!modalOpen);
-            setLoginMode("delete");
+            setModalOpen(!modalOpen)
+            setLoginMode('delete')
           }}
         >
           삭제
         </Button>
       </PostFooter>
       <hr />
+      <Comment />
+      <hr />
       <Modal
         open={modalOpen}
         onClick={() => {
-          closeLogin();
+          closeLogin()
         }}
         center
       >
         <Login
           onClick={(e) => {
-            e.stopPropagation();
+            e.stopPropagation()
           }}
         >
           <input
@@ -123,16 +126,16 @@ const Post = ({ getPost, params }) => {
           <div>
             <Button
               onClick={(e) => {
-                e.preventDefault();
-                closeLogin();
+                e.preventDefault()
+                closeLogin()
               }}
             >
               취소
             </Button>
             <Button
               onClick={(e) => {
-                e.preventDefault();
-                loginFirebasePost();
+                e.preventDefault()
+                loginFirebasePost()
               }}
             >
               확인
@@ -142,8 +145,8 @@ const Post = ({ getPost, params }) => {
         </Login>
       </Modal>
     </StPost>
-  );
-};
+  )
+}
 
 const StPost = styled.div`
   hr {
@@ -153,7 +156,7 @@ const StPost = styled.div`
     background-color: ${({ theme }) => theme.color};
     opacity: 0.3;
   }
-`;
+`
 
 const PostHeader = styled.div`
   width: 100%;
@@ -192,7 +195,7 @@ const PostHeader = styled.div`
       }
     }
   }
-`;
+`
 
 const PostBody = styled.div`
   text-align: left;
@@ -204,14 +207,14 @@ const PostBody = styled.div`
     padding: 1.5rem;
     margin-top: 3rem;
   }
-`;
+`
 
 const PostFooter = styled.div`
   text-align: right;
   button {
     margin: 0 0.5rem;
   }
-`;
+`
 
 const Login = styled.form`
   width: 270px;
@@ -273,6 +276,6 @@ const Login = styled.form`
       }
     }
   }
-`;
+`
 
-export default Post;
+export default Post

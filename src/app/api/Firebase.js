@@ -15,6 +15,7 @@ import {
   updateDoc,
   deleteDoc,
   setDoc,
+  increment,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -96,10 +97,14 @@ export const getAddAllFireStore = async (start, size) => {
 export const getOneFireStore = async (id) => {
   const docRef = doc(db, "Board", id);
   const docSnap = await getDoc(docRef);
+  // const aaa = await getDocs(collection(db, 'Board', id+'/comment'))
+  // aaa.forEach((doc)=>{
+  //   console.log(doc.data())
+  // })
   if (docSnap.exists()) {
     // 조회수 올리기
-    await updateDoc(docRef, {
-      view: docSnap.data().view + 1,
+    updateDoc(docRef, {
+      view: increment(1),
     });
     const ip = docSnap.data().ip.split(".");
     return {
@@ -132,6 +137,7 @@ export const postAddLike = async (id, like) => {
 // 게시글 쓰기
 export const postFireStore = async (data) => {
   await addDoc(collection(db, "Board"), data);
+  // await addDoc(collection(db, 'Board', docRef.id+'/comment'))
   return true;
 };
 

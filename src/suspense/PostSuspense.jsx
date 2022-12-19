@@ -22,7 +22,7 @@ const PostSuspense = () => {
   );
   useEffect(() => {
     setForSuspenseSetDispatch(dispatch(asyncGetOneFirebase(params.id)));
-  }, [dispatch, params]);
+  }, [dispatch, params.id]);
 
   const promise = useMemo(() => {
     return forSuspenseSetDispatch;

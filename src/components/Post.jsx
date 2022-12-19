@@ -7,8 +7,9 @@ import {
   asyncDeleteFirebase,
   asyncPostAddLikeFirebase,
 } from '../app/modules/Firebase/GetPostDataSlice'
+import MaxLength from '../hooks/MaxLength'
 import Button from './Button'
-import Comment from './Comment'
+import CommentComp from './CommentComp'
 import Modal from './Modal'
 
 const Post = ({ getPost, params }) => {
@@ -102,7 +103,7 @@ const Post = ({ getPost, params }) => {
         </Button>
       </PostFooter>
       <hr />
-      <Comment />
+      <CommentComp comments={post.comments} />
       <hr />
       <Modal
         open={modalOpen}
@@ -121,7 +122,9 @@ const Post = ({ getPost, params }) => {
             autoComplete="on"
             placeholder="비밀번호"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(MaxLength(e.target.value, 12))
+            }}
           />
           <div>
             <Button

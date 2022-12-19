@@ -9,6 +9,7 @@ import {
 import Button from '../components/Button'
 import Modal from '../components/Modal'
 import useBeforeunload from '../hooks/useBeforeunload'
+import MaxLength from '../hooks/MaxLength'
 
 const initalState = {
   title: '',
@@ -23,27 +24,21 @@ const initalState = {
 
 const reducer = (state, action) => {
   // 글자수 제한
-  const maxLength = (str, max) => {
-    if (str.length >= max) {
-      str = str.slice(0, max)
-    }
-    return str
-  }
   switch (action.type) {
     // 게시글 수정일시 데이터 받아오기
     case 'edit':
       return { ...state, ...action.payload }
     // 각 입력 각 변경
     case 'title':
-      return { ...state, title: maxLength(action.payload, 50) }
+      return { ...state, title: MaxLength(action.payload, 50) }
     case 'text':
       return { ...state, text: action.payload }
     case 'name':
-      return { ...state, name: maxLength(action.payload, 8) }
+      return { ...state, name: MaxLength(action.payload, 8) }
     case 'head':
       return { ...state, head: action.payload }
     case 'password':
-      return { ...state, password: maxLength(action.payload, 12) }
+      return { ...state, password: MaxLength(action.payload, 12) }
     default:
       return state
   }

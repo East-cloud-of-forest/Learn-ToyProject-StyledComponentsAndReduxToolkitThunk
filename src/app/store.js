@@ -1,9 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
-import GetBoardDataSlice from "./modules/Firebase/GetBoardDataSlice";
-import GetPostDataSlice from "./modules/Firebase/GetPostDataSlice";
-import WritePostSlice from "./modules/Firebase/WritePostSlice";
-import GetIpSlice from "./modules/GetIpSlice";
-import ThemeChangeSlice from "./modules/ThemeChangeSlice";
+import { configureStore } from '@reduxjs/toolkit'
+import GetBoardDataSlice from './modules/Firebase/GetBoardDataSlice'
+import GetPostDataSlice from './modules/Firebase/GetPostDataSlice'
+import WritePostSlice from './modules/Firebase/WritePostSlice'
+import GetIpSlice from './modules/GetIpSlice'
+import ThemeChangeSlice from './modules/ThemeChangeSlice'
 
 export const store = configureStore({
   reducer: {
@@ -17,4 +17,4 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false,
     }),
-});
+})

@@ -42,7 +42,7 @@ export const getAllFireStore = async () => {
   const boardRef = collection(db, 'Board')
   let q = query(boardRef, orderBy('date', 'desc'), limit(10))
   const querySnapshot = await getDocs(q)
-  querySnapshot.forEach((doc) => {
+  querySnapshot.forEach(async (doc) => {
     const date = new Date(+doc.data().date).toLocaleDateString('zh')
     const ip = doc.data().ip.split('.')
     result.board.push({
@@ -55,6 +55,17 @@ export const getAllFireStore = async () => {
       },
     })
   })
+  // 덧글 수 받아오기
+  for (const boardIndex in result.board) {
+    const comment = await getCommentCounterFirestore(
+      result.board[boardIndex].id,
+    )
+    result.board[boardIndex].data = {
+      ...result.board[boardIndex].data,
+      comment,
+    }
+  }
+  // 페이지네이션
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1]
   // 게시글 총 갯수
   const snapshot = await getCountFromServer(boardRef)
@@ -89,6 +100,17 @@ export const getAddAllFireStore = async (start, size) => {
       },
     })
   })
+  // 덧글 수 받아오기
+  for (const boardIndex in result.board) {
+    const comment = await getCommentCounterFirestore(
+      result.board[boardIndex].id,
+    )
+    result.board[boardIndex].data = {
+      ...result.board[boardIndex].data,
+      comment,
+    }
+  }
+  // 페이지네이션
   result.start = querySnapshot.docs[querySnapshot.docs.length - 1]
   return result
 }
@@ -200,5 +222,13 @@ const getCommentFireStore = async (id) => {
       ip: ip[0] + '.' + ip[1],
     })
   })
+  return comments
+}
+
+const getCommentCounterFirestore = async (id) => {
+  const commentsSnapshot = await getCountFromServer(
+    collection(db, 'Board', id + '/comment'),
+  )
+  const comments = commentsSnapshot.data().count
   return comments
 }

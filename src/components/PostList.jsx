@@ -1,26 +1,26 @@
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { asyncGetAddAllFirebase } from "../app/modules/Firebase/GetBoardDataSlice";
-import Button from "./Button";
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import styled from 'styled-components'
+import { asyncGetAddAllFirebase } from '../app/modules/Firebase/GetBoardDataSlice'
+import Button from './Button'
 
 const PostListComponent = ({ board }) => {
   board = board()
-  const nav = useNavigate();
-  const dispatch = useDispatch();
+  const nav = useNavigate()
+  const dispatch = useDispatch()
   const addList = () => {
-    dispatch(asyncGetAddAllFirebase({ start: board.start, size: 5 }));
-  };
+    dispatch(asyncGetAddAllFirebase({ start: board.start, size: 5 }))
+  }
 
   return (
     <StPostList>
       <table>
         <caption>게시글리스트</caption>
         <colgroup>
-          <col style={{ width: "10%" }} />
-          <col style={{ width: "*" }} />
-          <col style={{ width: "15%" }} />
-          <col style={{ width: "10%" }} />
+          <col style={{ width: '10%' }} />
+          <col style={{ width: '*' }} />
+          <col style={{ width: '15%' }} />
+          <col style={{ width: '10%' }} />
         </colgroup>
         <thead>
           <tr>
@@ -42,11 +42,12 @@ const PostListComponent = ({ board }) => {
                     <div>
                       <span
                         onClick={() => {
-                          nav("/board/" + x.id);
+                          nav('/board/' + x.id)
                         }}
                       >
                         {x.data.title}
                       </span>
+                      {x.data.comment === 0 || <span>({x.data.comment})</span>}
                     </div>
                   </div>
                 </div>
@@ -65,7 +66,7 @@ const PostListComponent = ({ board }) => {
       {board.list.length !== board.counter && (
         <Button
           onClick={() => {
-            addList();
+            addList()
           }}
           block
           size="1.2rem"
@@ -74,8 +75,8 @@ const PostListComponent = ({ board }) => {
         </Button>
       )}
     </StPostList>
-  );
-};
+  )
+}
 
 const StPostList = styled.div`
   width: 100%;
@@ -117,10 +118,17 @@ const StPostList = styled.div`
               white-space: nowrap;
               word-break: break-all;
               span {
-                width: 100%;
-                &:hover {
-                  text-decoration: underline;
-                  cursor: pointer;
+                :nth-child(1) {
+                  width: 100%;
+                  &:hover {
+                    text-decoration: underline;
+                    cursor: pointer;
+                  }
+                }
+                &:nth-child(2) {
+                  font-size: small;
+                  opacity: 0.5;
+                  margin-left: 0.5rem;
                 }
               }
             }
@@ -153,6 +161,6 @@ const StPostList = styled.div`
     padding: 1.5rem 0;
     margin-top: 1rem;
   }
-`;
+`
 
-export default PostListComponent;
+export default PostListComponent

@@ -68,7 +68,7 @@ const Post = ({ getPost, params }) => {
           <p>
             <span>조회수 {post.view}</span>
             <span>좋아요 {post.like}</span>
-            <span>댓글 </span>
+            <span>댓글 {post.comments.length}</span>
           </p>
         </div>
       </PostHeader>

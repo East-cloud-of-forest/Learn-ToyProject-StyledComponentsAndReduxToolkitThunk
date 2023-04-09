@@ -51,7 +51,9 @@ const GetPostDataSlice = createSlice({
   name: 'GetPostDataSlice',
   initialState: {
     status: 'done',
-    data: {},
+    data: {
+      comments: []
+    },
   },
   extraReducers: (builder) => {
     builder
